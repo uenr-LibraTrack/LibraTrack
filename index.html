@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>UENR LibraTrack – Real-Time Seat Availability</title>
+  <meta name="description" content="Check real-time study space occupancy and seat availability across UENR libraries." />
+  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(91,154,248,0.1);
+      border: 1px solid rgba(91,154,248,0.2);
+      border-radius: 24px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+    .hero-badge .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--status-open);
+      animation: pulse 2s infinite;
+    }
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    .footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="uenr.png" />
+  <link rel="apple-touch-icon" href="uenr.png" />
+
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="uenr.png" alt="UENR Logo" class="nav-logo" />
+      <div class="nav-title">UENR LibraTrack</div>
+    </a>
+    
+    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-links">
+      <a href="index.html" class="nav-link active">Dashboard</a>
+      <a href="admin.html" class="nav-link">Admin</a>
+      <a href="checkin.html" class="nav-link primary">
+        <span class="nav-link-full">Check In / Out</span>
+        <span class="nav-link-short">Check In</span>
+      </a>
+      
+      <!-- Notification Bell -->
+      <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center;">
+        <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
+        <span id="nav-bell-badge" class="bell-badge" style="display:none;">0</span>
+      </a>
+
+      <div class="nav-settings">
+        <button class="nav-link" id="settings-btn" style="background:transparent; border:none; cursor:pointer; padding: 8px;" onclick="document.getElementById('settings-dropdown-nav').classList.toggle('show')">
+          <i class="fa-solid fa-gear" style="font-size: 18px;"></i>
+        </button>
+        <div id="settings-dropdown-nav" class="settings-dropdown">
+           <div class="settings-item">
+             <span>Dark Mode</span>
+             <label class="theme-switch" title="Toggle light / dark mode">
+               <input type="checkbox" id="theme-toggle-switch" />
+               <span class="switch-track">
+                 <span class="switch-knob"></span>
+               </span>
+             </label>
+           </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="page-hero" id="dashboard-hero">
+    <!-- Slideshow layers -->
+    <div class="hero-slide" id="dash-slide-0" style="background-image: url('backdrop.jpg'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-1" style="background-image: url('JOEY-SHOT-IT-10-1024x683.jpg'); background-position: center 30%;"></div>
+    <div class="hero-slide" id="dash-slide-2" style="background-image: url('images.jfif'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-3" style="background-image: url('images (1).jfif'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-4" style="background-image: url('images (2).jfif'); background-position: center 40%;"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>UENR LibraTrack Dashboard</h1>
+      <p>Real-time occupancy tracking and seat availability for UENR campus libraries and study spaces.</p>
+    </div>
+    <!-- Dot indicators -->
+    <div class="hero-dots">
+      <span class="hero-dot active" onclick="dashGoToSlide(0)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(1)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(2)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(3)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(4)"></span>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">Total Capacity</div>
+      <div class="stat-value" id="total-seats">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Currently Occupied</div>
+      <div class="stat-value" id="total-students">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Available Spots</div>
+      <div class="stat-value" id="total-available">—</div>
+    </div>
+  </div>
+
+  <!-- LIBRARIES GRID -->
+  <div class="libraries-grid" id="libraries-grid"></div>
+
+  <!-- USER GUIDE BUTTON -->
+  <div style="text-align: center; margin-bottom: 60px;">
+    <button class="glowing-btn" onclick="openGuideModal()"><i class="fa-solid fa-book-open"></i> How to Use LibraTrack</button>
+  </div>
+
+  <!-- USER GUIDE MODAL -->
+  <div class="modal-overlay" id="guide-modal" onclick="if(event.target===this)closeGuideModal()">
+    <div class="modal-box guide-modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+        <h3><i class="fa-solid fa-book-open"></i> How to Use UENR LibraTrack</h3>
+        <button onclick="closeGuideModal()" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
+      </div>
+      <ol style="padding-left: 20px; color: var(--text-secondary); line-height: 1.8; font-size: 15px;">
+        <li style="margin-bottom: 12px;"><strong>Check in:</strong> Go to the <strong>Check In</strong> page, enter the Library Code (e.g. <strong>LIB-MAIN</strong>) and your Student ID.</li>
+        <li style="margin-bottom: 12px;"><strong>Check out:</strong> Enter the exact same Student ID on the <strong>Check In</strong> page to release your seat.</li>
+        <li style="margin-bottom: 12px;"><strong>View Occupancy:</strong> Live seat counts and percentages are visible on the main dashboard.</li>
+        <li style="margin-bottom: 12px;"><strong>Admin Codes:</strong> Admins can print library entrance codes from the Admin Panel.</li>
+        <li style="margin-bottom: 12px;"><strong>Get Alerts:</strong> Click "Enable Desktop Alerts" on the Notifications page.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="refresh-info">
+      ⟳ Last updated: <span id="last-updated">—</span> &nbsp;·&nbsp; Auto-refreshes every 30s
+    </div>
+    <div class="motto-text">Knowledge Integrity Impact</div>
+    <p>&copy; 2026 UENR LibraTrack. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js?v=2"></script>
+  <script src="notifications.js?v=2"></script>
+  <script src="app.js?v=2"></script>
+  <script>
+    function buildLibraryCard(lib, index) {
+      const occ = getOccupancy(lib.id);
+      const status = getStatus(lib.id);
+      const pct = Math.min(occ.pct, 100);
+      const progressCls = progressClass(status);
+
+      return `
+        <div class="card library-card fade-in" id="card-${lib.id}">
+          <div class="library-card-header">
+            <div class="library-name" id="name-${lib.id}">${lib.name}</div>
+            <span class="status-badge ${statusClass(status)}" id="badge-${lib.id}">
+              ${statusLabel(status)}
+            </span>
+          </div>
+
+          <div class="occupancy-section">
+            <div class="seat-numbers">
+              <div class="seat-big" id="pct-${lib.id}">${pct}%</div>
+              <div class="seat-label">Occupancy</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill ${progressCls}" id="bar-${lib.id}" style="width:${pct}%"></div>
+            </div>
+            <div style="font-size:13px; color:var(--text-secondary); font-weight:600;" id="cap-${lib.id}">
+               ${occ.taken} / ${occ.capacity} seats taken
+            </div>
+          </div>
+
+          <div class="entry-code-box">
+             <div class="entry-code-label">Entrance Code</div>
+             <div class="entry-code-value">${lib.id}</div>
+          </div>
+
+          <a href="checkin.html?lib=${lib.id}" class="checkin-btn" id="btn-${lib.id}">
+            ${status === 'full' ? 'Library Full' : status === 'closed' ? 'Library Closed' : 'Check in Now'}
+          </a>
+        </div>`;
+    }
+
+    function renderAll() {
+      const state = getState();
+      const grid = document.getElementById('libraries-grid');
+
+      if (!grid.hasChildNodes()) {
+        grid.innerHTML = state.libraries.map((lib, i) => buildLibraryCard(lib, i)).join('');
+        return;
+      }
+
+      let totalSeats = 0, totalAvail = 0, totalStudents = 0;
+
+      state.libraries.forEach(lib => {
+        const occ = getOccupancy(lib.id);
+        const status = getStatus(lib.id);
+        const pct = Math.min(occ.pct, 100);
+
+        totalSeats    += occ.capacity;
+        totalAvail    += occ.available;
+        totalStudents += occ.taken;
+
+        const pctEl = document.getElementById(`pct-${lib.id}`);
+        if (pctEl && pctEl.textContent !== `${pct}%`) pctEl.textContent = `${pct}%`;
+
+        const barEl = document.getElementById(`bar-${lib.id}`);
+        if (barEl) { 
+          barEl.style.width = pct + '%'; 
+          barEl.className = `progress-fill ${progressClass(status)}`;
+        }
+
+        const badgeEl = document.getElementById(`badge-${lib.id}`);
+        if (badgeEl) { badgeEl.className = `status-badge ${statusClass(status)}`; badgeEl.textContent = statusLabel(status); }
+
+        const capEl = document.getElementById(`cap-${lib.id}`);
+        if (capEl) capEl.textContent = `${occ.taken} / ${occ.capacity} seats taken`;
+
+        const btnEl = document.getElementById(`btn-${lib.id}`);
+        if (btnEl) {
+          btnEl.textContent = status === 'full' ? 'Library Full' : status === 'closed' ? 'Library Closed' : 'Check in Now';
+          if (status === 'closed' || status === 'full') {
+            btnEl.style.background = 'var(--status-closed-bg)';
+            btnEl.style.color = 'var(--status-closed-text)';
+            btnEl.style.borderColor = 'var(--border)';
+            btnEl.style.pointerEvents = 'none';
+          } else {
+            btnEl.style.background = '';
+            btnEl.style.color = '';
+            btnEl.style.borderColor = '';
+            btnEl.style.pointerEvents = 'auto';
+          }
+        }
+      });
+
+      document.getElementById('total-seats').textContent      = totalSeats.toLocaleString();
+      document.getElementById('total-available').textContent  = totalAvail.toLocaleString();
+      document.getElementById('total-students').textContent   = totalStudents.toLocaleString();
+      document.getElementById('last-updated').textContent     = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+
+    function initDashboard() {
+      renderAll();
+      setInterval(renderAll, 30000);
+    }
+    initDashboard();
+
+    function openGuideModal() {
+      document.getElementById('guide-modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeGuideModal() {
+      document.getElementById('guide-modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    /* ── Dashboard Hero Slideshow ───────────────────────────── */
+    const DASH_SLIDE_COUNT = 5;
+    let dashCurrentSlide = 0;
+    let dashTimer = null;
+
+    function dashGoToSlide(index) {
+      const prevSlide = document.getElementById('dash-slide-' + dashCurrentSlide);
+      const prevDot   = document.querySelectorAll('#dashboard-hero .hero-dot')[dashCurrentSlide];
+      if (prevSlide) prevSlide.classList.remove('active');
+      if (prevDot)   prevDot.classList.remove('active');
+
+      dashCurrentSlide = index % DASH_SLIDE_COUNT;
+      const nextSlide = document.getElementById('dash-slide-' + dashCurrentSlide);
+      const nextDot   = document.querySelectorAll('#dashboard-hero .hero-dot')[dashCurrentSlide];
+      if (nextSlide) nextSlide.classList.add('active');
+      if (nextDot)   nextDot.classList.add('active');
+
+      clearInterval(dashTimer);
+      dashTimer = setInterval(() => dashGoToSlide(dashCurrentSlide + 1), 5000);
+    }
+
+    // Start immediately on page load
+    dashGoToSlide(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "libraries": [
+    {
+      "id": "LIB-MAIN",
+      "name": "Main Library",
+      "capacity": 150,
+      "color": "lib-a",
+      "occupants": [],
+      "isOpen": true
+    },
+    {
+      "id": "LIB-ANNX",
+      "name": "Library Annex",
+      "capacity": 80,
+      "color": "lib-b",
+      "occupants": [],
+      "isOpen": true
+    },
+    {
+      "id": "LIB-RCEES",
+      "name": "RCEES Library",
+      "capacity": 50,
+      "color": "lib-c",
+      "occupants": [],
+      "isOpen": true
+    },
+    {
+      "id": "LIB-H1",
+      "name": "Hall 1 Library",
+      "capacity": 50,
+      "color": "lib-d",
+      "occupants": [],
+      "isOpen": true
+    }
+  ],
+  "lastUpdated": 1782089985709
+}

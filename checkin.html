@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Check In / Out – UENR LibraTrack</title>
+  <meta name="description"
+    content="Enter your student ID and library code to check in or out of a UENR campus study space." />
+  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    .checkin-tip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(91, 154, 248, 0.06);
+      border: 1px solid rgba(91, 154, 248, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 22px;
+    }
+
+    .checkin-tip strong {
+      color: var(--text-primary);
+    }
+  </style>
+  <link rel="icon" type="image/png" href="uenr.png" />
+  <link rel="apple-touch-icon" href="uenr.png" />
+
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="uenr.png" alt="UENR Logo" class="nav-logo" />
+      <div class="nav-title">UENR LibraTrack</div>
+    </a>
+    
+    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Dashboard</a>
+      <a href="admin.html" class="nav-link">Admin</a>
+      <a href="checkin.html" class="nav-link active primary">
+        <span class="nav-link-full">Check In / Out</span>
+        <span class="nav-link-short">Check In</span>
+      </a>
+
+      <!-- Notification Bell -->
+      <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center;">
+        <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
+        <span id="nav-bell-badge" class="bell-badge" style="display:none;">0</span>
+      </a>
+
+      <div class="nav-settings">
+        <button class="nav-link" id="settings-btn"
+          style="background:transparent; border:none; cursor:pointer; padding: 8px;"
+          onclick="document.getElementById('settings-dropdown-nav').classList.toggle('show')">
+          <i class="fa-solid fa-gear" style="font-size: 18px;"></i>
+        </button>
+        <div id="settings-dropdown-nav" class="settings-dropdown">
+          <div class="settings-item">
+            <span>Dark Mode</span>
+            <label class="theme-switch" title="Toggle light / dark mode">
+              <input type="checkbox" id="theme-toggle-switch" />
+              <span class="switch-track">
+                <span class="switch-knob"></span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="checkin-wrapper">
+    <div class="card checkin-panel">
+      <h2>Study Space Check-In</h2>
+      <p class="subtitle">Enter the entry code shown on the door sign and your Student ID or Name to check in or out.
+      </p>
+
+      <!-- Live library preview -->
+      <div class="library-preview" id="lib-preview">
+        <div class="preview-name" id="preview-name">—</div>
+        <div class="preview-seats" id="preview-seats">—</div>
+      </div>
+
+      <form id="checkin-form" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="lib-code">Library Entry Code</label>
+          <input class="form-input" id="lib-code" type="text" placeholder="e.g. LIB-MAIN" autocomplete="off"
+            autocapitalize="characters" maxlength="10" required />
+        </div>
+
+        <div class="form-group"
+          style="background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+          <div
+            style="background: var(--brand-blue); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div>
+            <div
+              style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">
+              Checking in as</div>
+            <div id="auth-user-display" style="font-weight: 600; color: var(--text-primary);">Student</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">Check In</button>
+      </form>
+
+      <div class="alert" id="result-alert">
+        <div class="alert-title" id="result-title"></div>
+        <div id="result-msg"></div>
+      </div>
+
+      <div class="checkin-tip">
+        <i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i> <span>Already checked in? Enter the same Student
+          ID again to <strong>check out</strong>.</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="motto-text">Knowledge Integrity Impact</div>
+    <p>&copy; 2026 UENR LibraTrack. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js?v=2"></script>
+  <script src="notifications.js?v=2"></script>
+  <script src="app.js?v=2"></script>
+  <script>
+    const form = document.getElementById('checkin-form');
+    const libInput = document.getElementById('lib-code');
+    const submitBtn = document.getElementById('submit-btn');
+    const alert = document.getElementById('result-alert');
+    const alertTitle = document.getElementById('result-title');
+    const alertMsg = document.getElementById('result-msg');
+    const preview = document.getElementById('lib-preview');
+    const previewName = document.getElementById('preview-name');
+    const previewSeats = document.getElementById('preview-seats');
+
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      document.getElementById('auth-user-display').textContent = `Student: ${currentUser.name || currentUser.id}`;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const presetLib = urlParams.get('lib');
+    if (presetLib) libInput.value = presetLib.toUpperCase();
+
+    function showAlert(type, title, msg) {
+      alert.className = `alert show alert-${type}`;
+      alertTitle.innerHTML = title;
+      alertMsg.innerHTML = msg;
+    }
+
+    function hideAlert() { alert.className = 'alert'; }
+
+    libInput.addEventListener('input', () => {
+      libInput.value = libInput.value.toUpperCase();
+      const code = libInput.value.trim();
+      const lib = getLibrary(code);
+      if (lib) {
+        const occ = getOccupancy(code);
+        const status = getStatus(code);
+        previewName.textContent = lib.name;
+        previewSeats.innerHTML = `<span class="status-badge ${statusClass(status)}" style="font-size:11px;padding:4px 10px;display:inline-flex;gap:5px;align-items:center"><span class="dot"></span>${statusLabel(status)}</span>&nbsp;&nbsp; ${occ.available} seat${occ.available !== 1 ? 's' : ''} available of ${occ.capacity}`;
+        preview.classList.add('show');
+        hideAlert();
+
+        // Update button text based on whether current user is already checked in
+        if (currentUser) {
+          const already = lib.occupants.find(o => o.id.toLowerCase() === currentUser.id.toLowerCase());
+          submitBtn.textContent = already ? 'Check Out' : 'Check In';
+        }
+      } else {
+        preview.classList.remove('show');
+        submitBtn.textContent = 'Check In';
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = libInput.value.trim().toUpperCase();
+
+      if (!code) { showAlert('error', 'Missing Code', 'Please enter the library entry code from the entrance sign.'); return; }
+      if (!currentUser) { showAlert('error', 'Authentication Error', 'You must be logged in to check in.'); return; }
+
+      const result = processCheckIn(code, currentUser.id, currentUser.name, currentUser.role);
+
+      if (result.success) {
+        const icon = result.action === 'checkin' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-right-from-bracket"></i>';
+        showAlert('success', `${icon} ${result.action === 'checkin' ? 'Checked In' : 'Checked Out'}`, result.message);
+        if (result.action === 'checkin') {
+          localStorage.setItem('currentLibrary', result.library.id);
+          submitBtn.textContent = 'Check Out';
+          submitBtn.style.background = 'var(--status-closed-text)';
+        } else {
+          localStorage.removeItem('currentLibrary');
+          form.reset();
+          submitBtn.textContent = 'Check In';
+          submitBtn.style.background = 'var(--brand-blue)';
+          preview.classList.remove('show');
+        }
+        libInput.dispatchEvent(new Event('input'));
+      } else {
+        showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
+      }
+    });
+
+    if (presetLib) libInput.dispatchEvent(new Event('input'));
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Admin Panel – UENR LibraTrack</title>
+  <meta name="description" content="Admin panel for managing UENR library seat capacity and occupancy." />
+  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="icon" type="image/png" href="uenr.png" />
+  <link rel="apple-touch-icon" href="uenr.png" />
+
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="uenr.png" alt="UENR Logo" class="nav-logo" />
+      <div class="nav-title">UENR LibraTrack</div>
+    </a>
+
+    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Dashboard</a>
+      <a href="admin.html" class="nav-link active">Admin</a>
+
+      <!-- Notification Bell -->
+      <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center;">
+        <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
+        <span id="nav-bell-badge" class="bell-badge" style="display:none;">0</span>
+      </a>
+
+      <span class="nav-link" style="cursor:pointer;color:var(--brand-burgundy);font-weight:700;"
+        onclick="handleLogout()">Lock Admin</span>
+      <div class="nav-settings">
+        <button class="nav-link" id="settings-btn" style="background:transparent; border:none; cursor:pointer; padding: 8px;" onclick="document.getElementById('settings-dropdown-nav').classList.toggle('show')">
+          <i class="fa-solid fa-gear" style="font-size: 18px;"></i>
+        </button>
+        <div id="settings-dropdown-nav" class="settings-dropdown">
+           <div class="settings-item">
+             <span>Dark Mode</span>
+             <label class="theme-switch" title="Toggle light / dark mode">
+               <input type="checkbox" id="theme-toggle-switch" />
+               <span class="switch-track">
+                 <span class="switch-knob"></span>
+               </span>
+             </label>
+           </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen">
+    <div class="checkin-wrapper">
+      <div class="card checkin-panel">
+        <div style="font-size: 32px; margin-bottom: 16px; text-align: center;">
+          <i class="fa-solid fa-lock admin-lock-icon" style="color: var(--brand-blue);"></i>
+        </div>
+        <h2 style="text-align: center;">Admin Access</h2>
+        <p class="subtitle">Enter your admin PIN to manage seats and capacity.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="pin-input">Admin PIN</label>
+          <input class="form-input" id="pin-input" type="password" placeholder="Enter PIN" maxlength="12"
+            inputmode="numeric" onkeydown="if(event.key==='Enter') handleLogin()" />
+        </div>
+        <button class="btn-submit" onclick="handleLogin()">Sign In</button>
+        <div class="alert" id="login-alert">
+          <div class="alert-title"><i class="fa-solid fa-circle-xmark"></i> Access Denied</div>
+          <div id="login-alert-msg"></div>
+        </div>
+        <p style="margin-top:24px; font-size:12px; color:var(--text-secondary); text-align:center;"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="admin-screen" style="display:none">
+    <div class="page-hero" id="admin-hero">
+      <!-- Slideshow layers: three images that cross-fade smoothly -->
+      <div class="hero-slide" id="slide-0" style="background-image: url('JOEY-SHOT-IT-10-1024x683.jpg'); background-position: center 30%;"></div>
+      <div class="hero-slide" id="slide-1" style="background-image: url('images.jfif'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-2" style="background-image: url('images (1).jfif'); background-position: center 40%;"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>UENR LibraTrack Admin</h1>
+        <p>Configure study spaces, view occupants, and manage seat capacities.</p>
+      </div>
+      <!-- Dot indicators -->
+      <div class="hero-dots">
+        <span class="hero-dot active" onclick="goToSlide(0)"></span>
+        <span class="hero-dot" onclick="goToSlide(1)"></span>
+        <span class="hero-dot" onclick="goToSlide(2)"></span>
+      </div>
+    </div>
+
+    <div class="admin-grid" id="admin-grid"></div>
+
+    <div class="settings-section no-print">
+      <div class="card">
+        <h3><i class="fa-solid fa-key"></i> Update Secure PIN</h3>
+        <form id="pin-form" onsubmit="event.preventDefault(); handleChangePin()" style="margin-top: 20px;">
+          <div class="pin-grid">
+            <div class="form-group">
+              <label class="form-label">Current PIN</label>
+              <input class="form-input" id="pin-current" type="password" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">New PIN</label>
+              <input class="form-input" id="pin-new" type="password" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New PIN</label>
+              <input class="form-input" id="pin-confirm" type="password" />
+            </div>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 12px 24px;" type="submit">Update PIN</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION PANEL -->
+    <div class="settings-section no-print">
+      <div class="card settings-card" style="margin-bottom: 24px;">
+        <div class="settings-title"><i class="fa-solid fa-bullhorn"></i> Send Notification</div>
+        <form id="notif-form" onsubmit="event.preventDefault(); handleSendNotification();">
+          <div class="form-group">
+            <label class="form-label">Notification Title</label>
+            <input class="form-input" id="notif-title" type="text" placeholder="e.g. Main Library Closing Early"
+              required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-input" id="notif-message" rows="3"
+              placeholder="Enter the full notification message..." style="resize:vertical;" required></textarea>
+          </div>
+          <div class="pin-grid">
+            <div class="form-group">
+              <label class="form-label">Type</label>
+              <select class="form-input" id="notif-type">
+                <option value="announcement">Announcement</option>
+                <option value="closure">Closure</option>
+                <option value="emergency">Emergency</option>
+                <option value="availability">Availability</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Target Audience</label>
+              <select class="form-input" id="notif-target">
+                <option value="all">All Libraries</option>
+                <option value="LIB-MAIN">LIB-MAIN (Main Library)</option>
+                <option value="LIB-ANNX">LIB-ANNX (Library Annex)</option>
+                <option value="LIB-H1">LIB-H1 (Hall 1 Library)</option>
+                <option value="LIB-RCEES">LIB-RCEES (RCEES Library)</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-submit" type="submit" style="width: auto; padding: 12px 24px;">Send Notification</button>
+        </form>
+      </div>
+
+      <div class="card settings-card">
+        <div class="settings-title"><i class="fa-solid fa-clipboard-list"></i> Notification History</div>
+        <div id="notif-history">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer no-print">
+      <div class="motto-text">Knowledge Integrity Impact</div>
+      <p>&copy; 2026 UENR LibraTrack. All rights reserved.</p>
+    </footer>
+
+  </div><!-- /admin-screen -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js?v=2"></script>
+  <script src="notifications.js?v=2"></script>
+  <script src="app.js?v=2"></script>
+  <script src="admin.js?v=2"></script>
+  <script>
+    function handleLogin() {
+      const pin = document.getElementById('pin-input').value;
+      const alertEl = document.getElementById('login-alert');
+      const msgEl = document.getElementById('login-alert-msg');
+
+      if (verifyPin(pin)) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-screen').style.display = 'block';
+        renderAdminCards();
+        renderNotificationHistory();
+        setInterval(renderAdminCards, 30000);
+        startSlideshow(); // Start hero image carousel
+      } else {
+        alertEl.className = 'alert show alert-error';
+        msgEl.textContent = 'Incorrect PIN. Please try again.';
+        document.getElementById('pin-input').value = '';
+        document.getElementById('pin-input').focus();
+      }
+    }
+
+    function handleLogout() {
+      document.getElementById('admin-screen').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'block';
+      document.getElementById('pin-input').value = '';
+    }
+
+    document.getElementById('pin-input').focus();
+
+    /* ── Hero Slideshow ────────────────────────────────────── */
+    const SLIDE_COUNT = 3;
+    let currentSlide = 0;
+    let slideshowTimer = null;
+
+    function goToSlide(index) {
+      // Remove active from current
+      const prevSlide = document.getElementById('slide-' + currentSlide);
+      const prevDot   = document.querySelectorAll('.hero-dot')[currentSlide];
+      if (prevSlide) prevSlide.classList.remove('active');
+      if (prevDot)   prevDot.classList.remove('active');
+
+      // Activate new
+      currentSlide = index % SLIDE_COUNT;
+      const nextSlide = document.getElementById('slide-' + currentSlide);
+      const nextDot   = document.querySelectorAll('.hero-dot')[currentSlide];
+      if (nextSlide) nextSlide.classList.add('active');
+      if (nextDot)   nextDot.classList.add('active');
+
+      // Reset auto-timer so it doesn't immediately jump after manual click
+      clearInterval(slideshowTimer);
+      slideshowTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
+    }
+
+    // Initialise first slide when admin screen becomes visible
+    function startSlideshow() {
+      goToSlide(0);
+    }
+  </script>
+</body>
+
+</html>
