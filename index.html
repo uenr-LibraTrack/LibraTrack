@@ -49,11 +49,25 @@
 </head>
 <body>
 
-  <!-- PWA Install Banner -->
-  <div id="pwa-install-banner" style="display: none; background: var(--brand-blue); color: white; padding: 12px 20px; text-align: center; font-size: 14px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-    Install LibraTrack for a better experience! 
-    <button onclick="installPWA()" style="background: white; color: var(--brand-blue); border: none; padding: 6px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; margin-left: 15px; font-size: 13px;">Install App</button>
-    <button onclick="document.getElementById('pwa-install-banner').style.display='none'" style="background: transparent; color: rgba(255,255,255,0.8); border: none; padding: 6px; cursor: pointer; margin-left: 10px; font-size: 16px;"><i class="fa-solid fa-xmark"></i></button>
+  <!-- PWA Install Modal (Glassmorphism) -->
+  <style>
+    @keyframes pwaSlideUp {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+  <div id="pwa-install-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 32px; padding: 36px 24px 28px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 24px 48px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4); color: white; display: flex; flex-direction: column; align-items: center; position: relative; animation: pwaSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+      
+      <button onclick="document.getElementById('pwa-install-banner').style.display='none'" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 32px; height: 32px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+      
+      <img src="uenr.png" alt="UENR Logo" style="width: 80px; height: 80px; border-radius: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); margin-bottom: 20px; background: white; padding: 6px;">
+      
+      <h3 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: -0.5px;">Install LibraTrack</h3>
+      <p style="margin: 0 0 24px 0; font-size: 15px; opacity: 0.9; line-height: 1.5; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Add the app to your home screen for quick access and offline availability!</p>
+
+      <button onclick="installPWA()" style="background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); color: #1e40af; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 800; font-size: 16px; cursor: pointer; width: 100%; box-shadow: 0 8px 16px rgba(0,0,0,0.2); transition: transform 0.2s;">Install App</button>
+    </div>
   </div>  <!-- NAV -->
   <nav class="navbar">
     <a href="index.html" class="nav-brand">

@@ -452,7 +452,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Update UI notify the user they can install the PWA
   const installBanner = document.getElementById('pwa-install-banner');
   if (installBanner) {
-    installBanner.style.display = 'block';
+    installBanner.style.display = 'flex'; // Use flex for center alignment
   }
 });
 
