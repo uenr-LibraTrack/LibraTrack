@@ -42,13 +42,19 @@
       font-weight: 500;
     }
   </style>
+  <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="uenr.png" />
   <link rel="apple-touch-icon" href="uenr.png" />
 
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- PWA Install Banner -->
+  <div id="pwa-install-banner" style="display: none; background: var(--brand-blue); color: white; padding: 12px 20px; text-align: center; font-size: 14px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+    Install LibraTrack for a better experience! 
+    <button onclick="installPWA()" style="background: white; color: var(--brand-blue); border: none; padding: 6px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; margin-left: 15px; font-size: 13px;">Install App</button>
+    <button onclick="document.getElementById('pwa-install-banner').style.display='none'" style="background: transparent; color: rgba(255,255,255,0.8); border: none; padding: 6px; cursor: pointer; margin-left: 10px; font-size: 16px;"><i class="fa-solid fa-xmark"></i></button>
+  </div>  <!-- NAV -->
   <nav class="navbar">
     <a href="index.html" class="nav-brand">
       <img src="uenr.png" alt="UENR Logo" class="nav-logo" />
