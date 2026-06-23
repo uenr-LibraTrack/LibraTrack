@@ -1,6 +1,34 @@
-const CACHE_NAME = 'libratrack-v3-safe';
+const CACHE_NAME = 'libratrack-v4-safe';
+
+const PRECACHE_ASSETS = [
+  './',
+  './index.html',
+  './admin.html',
+  './checkin.html',
+  './notifications.html',
+  './login.html',
+  './style.css?v=2',
+  './app.js?v=2',
+  './admin.js',
+  './notifications.js?v=2',
+  './supabaseClient.js?v=2',
+  './manifest.json',
+  './uenr.png',
+  './backdrop.jpg',
+  './JOEY-SHOT-IT-10-1024x683.jpg',
+  './images.jfif',
+  './images (1).jfif',
+  './images (2).jfif',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
+];
 
 self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(PRECACHE_ASSETS);
+    }).catch(err => console.warn('Pre-caching failed:', err))
+  );
   self.skipWaiting();
 });
 
@@ -20,9 +48,11 @@ self.addEventListener('activate', (e) => {
 
 // Network-First Strategy for all requests
 self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) {
+  if (e.request.method !== 'GET') {
     return;
   }
+  // Ignore extensions and non-http/https requests
+  if (!e.request.url.startsWith('http')) return;
   
   e.respondWith(
     fetch(e.request)

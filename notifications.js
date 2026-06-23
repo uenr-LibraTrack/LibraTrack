@@ -11,6 +11,9 @@ let globalNotifsState = null;
 
 async function loadNotifsFromServer() {
   try {
+    if (typeof supabaseClient === 'undefined') {
+      throw new Error("Supabase client not available (offline)");
+    }
     const { data: notifications, error } = await supabaseClient
       .from('notifications')
       .select('*')
@@ -120,13 +123,19 @@ async function addNotification({ title, message, type, targetLibrary, createdBy 
     isRead: false
   };
   
-  // We insert into Supabase. It will broadcast to all clients including us.
-  const { error } = await supabaseClient
-    .from('notifications')
-    .insert([notif]);
-    
-  if (error) {
-    console.error("Failed to insert notification into Supabase:", error);
+  if (typeof supabaseClient !== 'undefined') {
+    // We insert into Supabase. It will broadcast to all clients including us.
+    try {
+      const { error } = await supabaseClient
+        .from('notifications')
+        .insert([notif]);
+        
+      if (error) {
+        console.error("Failed to insert notification into Supabase:", error);
+      }
+    } catch (e) {
+      console.error("Supabase insert error:", e);
+    }
   }
   
   // NOTE: For targetLibrary and createdBy, since we didn't add them to the Supabase schema, 
@@ -139,13 +148,19 @@ async function deleteNotification(id) {
   const state = loadNotifsState();
   state.notifications = state.notifications.filter(n => n.id !== id);
   
-  const { error } = await supabaseClient
-    .from('notifications')
-    .delete()
-    .eq('id', id);
-    
-  if (error) {
-    console.error("Failed to delete notification from Supabase:", error);
+  if (typeof supabaseClient !== 'undefined') {
+    try {
+      const { error } = await supabaseClient
+        .from('notifications')
+        .delete()
+        .eq('id', id);
+        
+      if (error) {
+        console.error("Failed to delete notification from Supabase:", error);
+      }
+    } catch (e) {
+      console.error("Supabase delete error:", e);
+    }
   }
 }
 

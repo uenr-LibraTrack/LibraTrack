@@ -22,6 +22,9 @@ let globalState = null;
 
 async function loadStateFromServer() {
   try {
+    if (typeof supabaseClient === 'undefined') {
+      throw new Error("Supabase client not available (offline)");
+    }
     const { data: libraries, error } = await supabaseClient
       .from('libraries')
       .select('*')
@@ -56,15 +59,23 @@ async function saveState(state) {
   state.lastUpdated = Date.now();
   globalState = state;
   
+  if (typeof supabaseClient === 'undefined') {
+    console.warn("Supabase client not available. Running in offline mode.");
+    return;
+  }
+  
   for (const lib of state.libraries) {
-    const { error } = await supabaseClient
-      .from('libraries')
-      .update({ occupants: lib.occupants, isOpen: lib.isOpen, capacity: lib.capacity })
-      .eq('id', lib.id);
-      
-    if (error) {
-      console.error("Failed to update library state in Supabase:", lib.id, error);
-      alert("Database Error: " + error.message);
+    try {
+      const { error } = await supabaseClient
+        .from('libraries')
+        .update({ occupants: lib.occupants, isOpen: lib.isOpen, capacity: lib.capacity })
+        .eq('id', lib.id);
+        
+      if (error) {
+        console.error("Failed to update library state in Supabase:", lib.id, error);
+      }
+    } catch (e) {
+      console.error("Supabase update error:", e);
     }
   }
 }
