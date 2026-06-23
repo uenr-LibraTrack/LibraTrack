@@ -1,1 +1,21 @@
-{}
+{
+  "name": "UENR LibraTrack",
+  "short_name": "LibraTrack",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "description": "Smart library occupancy and notification platform for UENR",
+  "icons": [
+    {
+      "src": "uenr.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "uenr.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
