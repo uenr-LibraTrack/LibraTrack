@@ -471,6 +471,16 @@ if ('serviceWorker' in navigator) {
 
 // PWA Install Prompt
 let deferredPrompt;
+
+function isIos() {
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  return /iphone|ipad|ipod/.test(userAgent);
+}
+
+function isInStandaloneMode() {
+  return ('standalone' in window.navigator) && (window.navigator.standalone);
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent the mini-infobar from appearing on mobile
   e.preventDefault();
@@ -480,6 +490,23 @@ window.addEventListener('beforeinstallprompt', (e) => {
   const installBanner = document.getElementById('pwa-install-banner');
   if (installBanner) {
     installBanner.style.display = 'flex'; // Use flex for center alignment
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (isIos() && !isInStandaloneMode()) {
+    const installBanner = document.getElementById('pwa-install-banner');
+    if (installBanner) {
+      installBanner.style.display = 'flex';
+      const installBtn = installBanner.querySelector('button[onclick="installPWA()"]');
+      if (installBtn) {
+        installBtn.style.display = 'none';
+        const textPs = installBanner.querySelectorAll('p');
+        if (textPs && textPs.length > 0) {
+           textPs[0].innerHTML = 'To install the app on iOS, tap the <strong>Share</strong> icon and then <strong>Add to Home Screen</strong>.';
+        }
+      }
+    }
   }
 });
 
