@@ -222,7 +222,11 @@
             submitBtn.disabled = false;
 
             if (dist > GEOFENCE_RADIUS_METERS) {
-              showAlert('error', '<i class="fa-solid fa-location-dot"></i> Out of Range', `Check-In Failed: You must be on campus to check in. (You are approx ${Math.round(dist/1000)}km away).`);
+              const msg = `Check-In Failed: You must be on campus to check in. (You are approx ${Math.round(dist/1000)}km away).`;
+              showAlert('error', '<i class="fa-solid fa-location-dot"></i> Out of Range', msg);
+              if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("Out of Range", { body: msg, icon: "uenr.png" });
+              }
               return;
             }
 
