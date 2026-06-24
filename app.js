@@ -16,6 +16,33 @@ const LIBRARY_DEFAULTS = [
 const ICONS = ['<i class="fa-solid fa-book"></i>', '<i class="fa-solid fa-building-columns"></i>', '<i class="fa-solid fa-bolt"></i>', '<i class="fa-solid fa-landmark"></i>'];
 
 // ============================================================
+//  GEOFENCING CONSTANTS
+// ============================================================
+// UENR Campus approximate coordinates
+const CAMPUS_LAT = 7.3399;
+const CAMPUS_LNG = -2.3267;
+// Radius in meters (e.g., 2000 meters = 2km)
+const GEOFENCE_RADIUS_METERS = 2000;
+
+/**
+ * Calculates the distance between two coordinates in meters using the Haversine formula
+ */
+function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; // Earth's radius in meters
+  const radLat1 = lat1 * Math.PI / 180;
+  const radLat2 = lat2 * Math.PI / 180;
+  const deltaLat = (lat2 - lat1) * Math.PI / 180;
+  const deltaLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+            Math.cos(radLat1) * Math.cos(radLat2) *
+            Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+// ============================================================
 //  STATE  (persisted to backend API)
 // ============================================================
 let globalState = null;

@@ -199,6 +199,52 @@
       if (!code) { showAlert('error', 'Missing Code', 'Please enter the library entry code from the entrance sign.'); return; }
       if (!currentUser) { showAlert('error', 'Authentication Error', 'You must be logged in to check in.'); return; }
 
+      // Skip geofence if the user is checking out
+      const isCheckOut = submitBtn.textContent === 'Check Out';
+
+      if (!isCheckOut) {
+        if (!navigator.geolocation) {
+           showAlert('error', 'Geolocation Unsupported', 'Your browser does not support geolocation. Please use a modern browser.');
+           return;
+        }
+
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying Location...';
+        submitBtn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+            const dist = calculateDistanceMeters(userLat, userLng, CAMPUS_LAT, CAMPUS_LNG);
+
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+
+            if (dist > GEOFENCE_RADIUS_METERS) {
+              showAlert('error', '<i class="fa-solid fa-location-dot"></i> Out of Range', `Check-In Failed: You must be on campus to check in. (You are approx ${Math.round(dist/1000)}km away).`);
+              return;
+            }
+
+            // Proceed with check-in
+            executeCheckInProcess(code);
+          },
+          (error) => {
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+            let errMsg = 'Location access is required to verify you are on campus.';
+            if (error.code === error.PERMISSION_DENIED) errMsg = 'Location Access Denied. Please enable location permissions for this site.';
+            showAlert('error', '<i class="fa-solid fa-location-dot"></i> Location Required', errMsg);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } else {
+         // It's a checkout, skip geofence
+         executeCheckInProcess(code);
+      }
+    });
+
+    function executeCheckInProcess(code) {
       const result = processCheckIn(code, currentUser.id, currentUser.name, currentUser.role);
 
       if (result.success) {
@@ -219,7 +265,7 @@
       } else {
         showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
       }
-    });
+    }
 
     if (presetLib) libInput.dispatchEvent(new Event('input'));
   </script>
