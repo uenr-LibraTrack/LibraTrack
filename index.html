@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>UENR LibraTrack – Real-Time Seat Availability</title>
-  <meta name="description" content="Check real-time study space occupancy and seat availability across UENR libraries." />
+  <meta name="description"
+    content="Check real-time study space occupancy and seat availability across UENR libraries." />
   <link rel="stylesheet" href="style.css?v=2" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
@@ -14,8 +16,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(91,154,248,0.1);
-      border: 1px solid rgba(91,154,248,0.2);
+      background: rgba(91, 154, 248, 0.1);
+      border: 1px solid rgba(91, 154, 248, 0.2);
       border-radius: 24px;
       padding: 6px 16px;
       font-size: 12px;
@@ -25,12 +27,15 @@
       letter-spacing: 1px;
       margin-bottom: 20px;
     }
+
     .hero-badge .live-dot {
-      width: 7px; height: 7px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--status-open);
       animation: pulse 2s infinite;
     }
+
     .footer {
       border-top: 1px solid var(--border);
       padding: 28px 24px;
@@ -38,6 +43,7 @@
       color: var(--text-muted);
       font-size: 12px;
     }
+
     .footer a {
       color: var(--accent-blue);
       text-decoration: none;
@@ -49,34 +55,53 @@
   <link rel="apple-touch-icon" href="uenr.png" />
 
 </head>
+
 <body>
 
   <!-- PWA Install Modal (Glassmorphism) -->
   <style>
     @keyframes pwaSlideUp {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
   </style>
-  <div id="pwa-install-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
-    <div style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 32px; padding: 36px 24px 28px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 24px 48px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4); color: white; display: flex; flex-direction: column; align-items: center; position: relative; animation: pwaSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
-      
-      <button onclick="document.getElementById('pwa-install-banner').style.display='none'" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 32px; height: 32px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i class="fa-solid fa-xmark"></i></button>
-      
-      <img src="uenr.png" alt="UENR Logo" style="width: 80px; height: 80px; border-radius: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); margin-bottom: 20px; background: white; padding: 6px;">
-      
-      <h3 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: -0.5px;">Install LibraTrack</h3>
-      <p style="margin: 0 0 24px 0; font-size: 15px; opacity: 0.9; line-height: 1.5; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Add the app to your home screen for quick access and offline availability!</p>
+  <div id="pwa-install-banner"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div
+      style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 32px; padding: 36px 24px 28px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 24px 48px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4); color: white; display: flex; flex-direction: column; align-items: center; position: relative; animation: pwaSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
 
-      <button onclick="installPWA()" style="background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); color: #1e40af; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 800; font-size: 16px; cursor: pointer; width: 100%; box-shadow: 0 8px 16px rgba(0,0,0,0.2); transition: transform 0.2s;">Install App</button>
+      <button onclick="document.getElementById('pwa-install-banner').style.display='none'"
+        style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 32px; height: 32px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i
+          class="fa-solid fa-xmark"></i></button>
+
+      <img src="uenr.png" alt="UENR Logo"
+        style="width: 80px; height: 80px; border-radius: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); margin-bottom: 20px; background: white; padding: 6px;">
+
+      <h3
+        style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: -0.5px;">
+        Install LibraTrack</h3>
+      <p
+        style="margin: 0 0 24px 0; font-size: 15px; opacity: 0.9; line-height: 1.5; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
+        Add the app to your home screen for quick access and offline availability!</p>
+
+      <button onclick="installPWA()"
+        style="background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); color: #1e40af; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 800; font-size: 16px; cursor: pointer; width: 100%; box-shadow: 0 8px 16px rgba(0,0,0,0.2); transition: transform 0.2s;">Install
+        App</button>
     </div>
-  </div>  <!-- NAV -->
+  </div> <!-- NAV -->
   <nav class="navbar">
     <a href="index.html" class="nav-brand">
       <img src="uenr.png" alt="UENR Logo" class="nav-logo" />
       <div class="nav-title">UENR LibraTrack</div>
     </a>
-    
+
     <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileMenu()">
       <span></span>
       <span></span>
@@ -90,7 +115,7 @@
         <span class="nav-link-full">Check In / Out</span>
         <span class="nav-link-short">Check In</span>
       </a>
-      
+
       <!-- Notification Bell -->
       <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center;">
         <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
@@ -98,19 +123,21 @@
       </a>
 
       <div class="nav-settings">
-        <button class="nav-link" id="settings-btn" style="background:transparent; border:none; cursor:pointer; padding: 8px;" onclick="document.getElementById('settings-dropdown-nav').classList.toggle('show')">
+        <button class="nav-link" id="settings-btn"
+          style="background:transparent; border:none; cursor:pointer; padding: 8px;"
+          onclick="document.getElementById('settings-dropdown-nav').classList.toggle('show')">
           <i class="fa-solid fa-gear" style="font-size: 18px;"></i>
         </button>
         <div id="settings-dropdown-nav" class="settings-dropdown">
-           <div class="settings-item">
-             <span>Dark Mode</span>
-             <label class="theme-switch" title="Toggle light / dark mode">
-               <input type="checkbox" id="theme-toggle-switch" />
-               <span class="switch-track">
-                 <span class="switch-knob"></span>
-               </span>
-             </label>
-           </div>
+          <div class="settings-item">
+            <span>Dark Mode</span>
+            <label class="theme-switch" title="Toggle light / dark mode">
+              <input type="checkbox" id="theme-toggle-switch" />
+              <span class="switch-track">
+                <span class="switch-knob"></span>
+              </span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -119,11 +146,16 @@
   <!-- HERO -->
   <div class="page-hero" id="dashboard-hero">
     <!-- Slideshow layers -->
-    <div class="hero-slide" id="dash-slide-0" style="background-image: url('backdrop.jpg'); background-position: center 40%;"></div>
-    <div class="hero-slide" id="dash-slide-1" style="background-image: url('JOEY-SHOT-IT-10-1024x683.jpg'); background-position: center 30%;"></div>
-    <div class="hero-slide" id="dash-slide-2" style="background-image: url('images.jfif'); background-position: center 40%;"></div>
-    <div class="hero-slide" id="dash-slide-3" style="background-image: url('images (1).jfif'); background-position: center 40%;"></div>
-    <div class="hero-slide" id="dash-slide-4" style="background-image: url('images (2).jfif'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-0"
+      style="background-image: url('backdrop.jpg'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-1"
+      style="background-image: url('JOEY-SHOT-IT-10-1024x683.jpg'); background-position: center 30%;"></div>
+    <div class="hero-slide" id="dash-slide-2"
+      style="background-image: url('images.jfif'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-3"
+      style="background-image: url('images (1).jfif'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-4"
+      style="background-image: url('images (2).jfif'); background-position: center 40%;"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1>UENR LibraTrack Dashboard</h1>
@@ -168,14 +200,17 @@
     <div class="modal-box guide-modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
         <h3><i class="fa-solid fa-book-open"></i> Library Rules</h3>
-        <button onclick="closeGuideModal()" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
+        <button onclick="closeGuideModal()"
+          style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i
+            class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
       </div>
       <ol style="padding-left: 20px; color: var(--text-secondary); line-height: 1.8; font-size: 15px;">
-        <li style="margin-bottom: 12px;"><strong>Check in:</strong> Go to the <strong>Check In</strong> page, enter the Library Code (e.g. <strong>LIB-MAIN</strong>) and your Student ID.</li>
-        <li style="margin-bottom: 12px;"><strong>Check out:</strong> Enter the exact same Student ID on the <strong>Check In</strong> page to release your seat.</li>
-        <li style="margin-bottom: 12px;"><strong>View Occupancy:</strong> Live seat counts and percentages are visible on the main dashboard.</li>
-        <li style="margin-bottom: 12px;"><strong>Admin Codes:</strong> Admins can print library entrance codes from the Admin Panel.</li>
-        <li style="margin-bottom: 12px;"><strong>Get Alerts:</strong> Click "Enable Desktop Alerts" on the Notifications page.</li>
+        <li style="margin-bottom: 12px;"><strong>Rule 1:</strong> Don't enter the Library with food or water</li>
+        <li style="margin-bottom: 12px;"><strong>Rule 2:</strong> Enter the Library gently.</li>
+        <li style="margin-bottom: 12px;"><strong>Rule 3:</strong> Keep your phones on Silent or Vibrate </li>
+        <li style="margin-bottom: 12px;"><strong>Rule 4:</strong> Avoid loud conversations</li>
+        <li style="margin-bottom: 12px;"><strong>Rule 5:</strong> When leaving, please click on Check Out to free
+          up your seat for others.</li>
       </ol>
     </div>
   </div>
@@ -248,16 +283,16 @@
         const status = getStatus(lib.id);
         const pct = Math.min(occ.pct, 100);
 
-        totalSeats    += occ.capacity;
-        totalAvail    += occ.available;
+        totalSeats += occ.capacity;
+        totalAvail += occ.available;
         totalStudents += occ.taken;
 
         const pctEl = document.getElementById(`pct-${lib.id}`);
         if (pctEl && pctEl.textContent !== `${pct}%`) pctEl.textContent = `${pct}%`;
 
         const barEl = document.getElementById(`bar-${lib.id}`);
-        if (barEl) { 
-          barEl.style.width = pct + '%'; 
+        if (barEl) {
+          barEl.style.width = pct + '%';
           barEl.className = `progress-fill ${progressClass(status)}`;
         }
 
@@ -284,10 +319,10 @@
         }
       });
 
-      document.getElementById('total-seats').textContent      = totalSeats.toLocaleString();
-      document.getElementById('total-available').textContent  = totalAvail.toLocaleString();
-      document.getElementById('total-students').textContent   = totalStudents.toLocaleString();
-      document.getElementById('last-updated').textContent     = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      document.getElementById('total-seats').textContent = totalSeats.toLocaleString();
+      document.getElementById('total-available').textContent = totalAvail.toLocaleString();
+      document.getElementById('total-students').textContent = totalStudents.toLocaleString();
+      document.getElementById('last-updated').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
     function initDashboard() {
@@ -313,15 +348,15 @@
 
     function dashGoToSlide(index) {
       const prevSlide = document.getElementById('dash-slide-' + dashCurrentSlide);
-      const prevDot   = document.querySelectorAll('#dashboard-hero .hero-dot')[dashCurrentSlide];
+      const prevDot = document.querySelectorAll('#dashboard-hero .hero-dot')[dashCurrentSlide];
       if (prevSlide) prevSlide.classList.remove('active');
-      if (prevDot)   prevDot.classList.remove('active');
+      if (prevDot) prevDot.classList.remove('active');
 
       dashCurrentSlide = index % DASH_SLIDE_COUNT;
       const nextSlide = document.getElementById('dash-slide-' + dashCurrentSlide);
-      const nextDot   = document.querySelectorAll('#dashboard-hero .hero-dot')[dashCurrentSlide];
+      const nextDot = document.querySelectorAll('#dashboard-hero .hero-dot')[dashCurrentSlide];
       if (nextSlide) nextSlide.classList.add('active');
-      if (nextDot)   nextDot.classList.add('active');
+      if (nextDot) nextDot.classList.add('active');
 
       clearInterval(dashTimer);
       dashTimer = setInterval(() => dashGoToSlide(dashCurrentSlide + 1), 5000);
@@ -331,4 +366,5 @@
     dashGoToSlide(0);
   </script>
 </body>
+
 </html>
