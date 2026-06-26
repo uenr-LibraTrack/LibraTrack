@@ -288,24 +288,39 @@ function showToast(msg, type = 'success') {
 // ============================================================
 //  LIB CORNER ADMIN
 // ============================================================
-function handlePostLibCorner() {
+async function handlePostLibCorner() {
   const message = document.getElementById('corner-message').value.trim();
   if (!message) return;
   
-  const posts = JSON.parse(localStorage.getItem('lib_corner_posts') || '[]');
-  posts.unshift({
-    id: Date.now().toString(),
-    message: message,
-    timestamp: Date.now()
-  });
-  
-  // Keep only the latest 10 posts
-  if (posts.length > 10) posts.length = 10;
-  
-  localStorage.setItem('lib_corner_posts', JSON.stringify(posts));
-  
-  showToast('Posted to Lib Corner');
-  document.getElementById('lib-corner-form').reset();
+  const btn = document.querySelector('#lib-corner-form .btn-submit');
+  const ogText = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Posting...';
+  btn.disabled = true;
+
+  try {
+    const { error } = await supabaseClient
+      .from('notifications')
+      .insert([{
+        id: Date.now().toString(),
+        title: 'Lib Corner Update',
+        message: message,
+        target: 'lib-corner',
+        timestamp: Date.now(),
+        severity: 'info',
+        type: 'general'
+      }]);
+      
+    if (error) throw error;
+    
+    showToast('Posted to Lib Corner');
+    document.getElementById('lib-corner-form').reset();
+  } catch (e) {
+    console.error("Lib Corner Post Error", e);
+    showToast('Failed to post. Check connection.');
+  } finally {
+    btn.innerHTML = ogText;
+    btn.disabled = false;
+  }
 }
 
 // ============================================================

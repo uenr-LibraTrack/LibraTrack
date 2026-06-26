@@ -463,7 +463,13 @@ function renderLibCorner() {
   const feed = document.getElementById('lib-corner-feed');
   if (!feed) return;
   
-  const posts = JSON.parse(localStorage.getItem('lib_corner_posts') || '[]');
+  let posts = [];
+  if (typeof loadNotifsState === 'function') {
+    const state = loadNotifsState();
+    if (state && state.notifications) {
+      posts = state.notifications.filter(n => n.target === 'lib-corner');
+    }
+  }
   
   if (posts.length === 0) {
     feed.innerHTML = '<div style="color:var(--text-muted); font-size:13px; text-align:center;">No recent announcements.</div>';

@@ -65,6 +65,7 @@ function initNotifsRealtime() {
         if (typeof updateNotificationBadge === 'function') updateNotificationBadge();
         if (typeof renderNotificationHistory === 'function' && document.getElementById('notif-history')) renderNotificationHistory();
         if (typeof renderNotificationFeed === 'function' && document.getElementById('notif-feed')) renderNotificationFeed();
+        if (typeof renderLibCorner === 'function') renderLibCorner();
         
         // Spawn local browser notification if permitted
         if ("Notification" in window && Notification.permission === "granted") {
@@ -85,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof updateNotificationBadge === 'function') updateNotificationBadge();
     if (typeof renderNotificationHistory === 'function' && document.getElementById('notif-history')) renderNotificationHistory();
     if (typeof renderNotificationFeed === 'function' && document.getElementById('notif-feed')) renderNotificationFeed();
+    if (typeof renderLibCorner === 'function') renderLibCorner();
   });
 });
 
