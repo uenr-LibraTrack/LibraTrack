@@ -156,8 +156,8 @@ function renderAnalytics() {
   const analytics = JSON.parse(localStorage.getItem('lib_analytics') || '[]');
   
   // Mock data if empty
-  let dataPoints = [12, 19, 3, 5, 2, 3, 9];
-  let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  let dataPoints = [12, 19, 3, 5, 2, 3];
+  let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
   if (analytics.length > 0) {
     // Basic peak hour calculation
