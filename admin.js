@@ -301,13 +301,12 @@ async function handlePostLibCorner() {
     const { error } = await supabaseClient
       .from('notifications')
       .insert([{
-        id: Date.now().toString(),
+        id: `libcorner_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
         title: 'Lib Corner Update',
         message: message,
-        target: 'lib-corner',
+        type: 'lib-corner',
         timestamp: Date.now(),
-        severity: 'info',
-        type: 'general'
+        isRead: false
       }]);
       
     if (error) throw error;

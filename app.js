@@ -467,7 +467,7 @@ function renderLibCorner() {
   if (typeof loadNotifsState === 'function') {
     const state = loadNotifsState();
     if (state && state.notifications) {
-      posts = state.notifications.filter(n => n.target === 'lib-corner');
+      posts = state.notifications.filter(n => n.type === 'lib-corner');
     }
   }
   
