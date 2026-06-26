@@ -43,7 +43,7 @@
       <img src="uenr.png" alt="UENR Logo" class="nav-logo" />
       <div class="nav-title">UENR LibraTrack</div>
     </a>
-    
+
     <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileMenu()">
       <span></span>
       <span></span>
@@ -88,7 +88,8 @@
   <div class="checkin-wrapper">
     <div class="card checkin-panel">
       <h2>Study Space Check-In</h2>
-      <p class="subtitle">Enter the entry code shown on the door sign and your Student ID or Name to check in or out.
+      <p class="subtitle">Please kindly scan the QR code at the enterance before you enter and when you are done scan
+        the QR code on where you sat to checkout.
       </p>
 
       <!-- Live library preview -->
@@ -98,7 +99,9 @@
       </div>
 
       <!-- QR Scanner UI -->
-      <div id="qr-reader" style="width: 100%; border-radius: var(--radius-md); overflow: hidden; display: none; margin-bottom: 20px;"></div>
+      <div id="qr-reader"
+        style="width: 100%; border-radius: var(--radius-md); overflow: hidden; display: none; margin-bottom: 20px;">
+      </div>
 
       <form id="checkin-form" novalidate>
         <input id="lib-code" type="hidden" required />
@@ -118,7 +121,9 @@
         </div>
 
         <div style="text-align: center; margin-top: 10px;">
-          <button type="button" class="btn-submit" id="start-scanner-btn" style="background: var(--brand-green); border: none; padding: 14px 24px; border-radius: var(--radius-md); width: 100%;"><i class="fa-solid fa-qrcode"></i> Scan QR Code to Check In/Out</button>
+          <button type="button" class="btn-submit" id="start-scanner-btn"
+            style="background: var(--brand-green); border: none; padding: 14px 24px; border-radius: var(--radius-md); width: 100%;"><i
+              class="fa-solid fa-qrcode"></i> Scan QR Code to Check In/Out</button>
         </div>
 
         <button type="submit" class="btn-submit" id="submit-btn" style="display: none;">Check In</button>
@@ -209,8 +214,8 @@
 
       if (!isCheckOut) {
         if (!navigator.geolocation) {
-           showAlert('error', 'Geolocation Unsupported', 'Your browser does not support geolocation. Please use a modern browser.');
-           return;
+          showAlert('error', 'Geolocation Unsupported', 'Your browser does not support geolocation. Please use a modern browser.');
+          return;
         }
 
         const originalBtnText = submitBtn.innerHTML;
@@ -227,7 +232,7 @@
             submitBtn.disabled = false;
 
             if (dist > GEOFENCE_RADIUS_METERS) {
-              const msg = `Check-In Failed: You must be on campus to check in. (You are approx ${Math.round(dist/1000)}km away).`;
+              const msg = `Check-In Failed: You must be on campus to check in. (You are approx ${Math.round(dist / 1000)}km away).`;
               showAlert('error', '<i class="fa-solid fa-location-dot"></i> Out of Range', msg);
               if ("Notification" in window && Notification.permission === "granted") {
                 new Notification("Out of Range", { body: msg, icon: "uenr.png" });
@@ -248,8 +253,8 @@
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
       } else {
-         // It's a checkout, skip geofence
-         executeCheckInProcess(code);
+        // It's a checkout, skip geofence
+        executeCheckInProcess(code);
       }
     });
 
@@ -289,8 +294,8 @@
       document.getElementById('start-scanner-btn').style.display = 'none';
 
       html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
-      
+        "qr-reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+
       html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     });
 
@@ -302,17 +307,17 @@
         const match = decodedText.match(/LIB:([A-Z0-9\-]+)/i);
         if (match) parsedCode = match[1];
       }
-      
+
       libInput.value = parsedCode.toUpperCase();
       libInput.dispatchEvent(new Event('input'));
-      
+
       // Stop scanner
       if (html5QrcodeScanner) {
         html5QrcodeScanner.clear();
       }
       document.getElementById('qr-reader').style.display = 'none';
       document.getElementById('start-scanner-btn').style.display = 'inline-block';
-      
+
       // Auto-submit the hidden form to trigger geolocation & checkin logic
       document.getElementById('submit-btn').click();
     }
