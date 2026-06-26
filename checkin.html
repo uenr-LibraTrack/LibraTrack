@@ -97,13 +97,11 @@
         <div class="preview-seats" id="preview-seats">—</div>
       </div>
 
-      <form id="checkin-form" novalidate>
+      <!-- QR Scanner UI -->
+      <div id="qr-reader" style="width: 100%; border-radius: var(--radius-md); overflow: hidden; display: none; margin-bottom: 20px;"></div>
 
-        <div class="form-group">
-          <label class="form-label" for="lib-code">Library Entry Code</label>
-          <input class="form-input" id="lib-code" type="text" placeholder="e.g. LIB-MAIN" autocomplete="off"
-            autocapitalize="characters" maxlength="10" required />
-        </div>
+      <form id="checkin-form" novalidate>
+        <input id="lib-code" type="hidden" required />
 
         <div class="form-group"
           style="background: var(--bg-card); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
@@ -114,12 +112,16 @@
           <div>
             <div
               style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">
-              Checking in as</div>
+              Active User</div>
             <div id="auth-user-display" style="font-weight: 600; color: var(--text-primary);">Student</div>
           </div>
         </div>
 
-        <button type="submit" class="btn-submit" id="submit-btn">Check In</button>
+        <div style="text-align: center; margin-top: 10px;">
+          <button type="button" class="btn-submit" id="start-scanner-btn" style="background: var(--brand-green); border: none; padding: 14px 24px; border-radius: var(--radius-md); width: 100%;"><i class="fa-solid fa-qrcode"></i> Scan QR Code to Check In/Out</button>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn" style="display: none;">Check In</button>
       </form>
 
       <div class="alert" id="result-alert">
@@ -139,6 +141,7 @@
     <p>&copy; 2026 UENR LibraTrack. All rights reserved.</p>
   </footer>
 
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseClient.js?v=2"></script>
   <script src="notifications.js?v=2"></script>
@@ -274,6 +277,49 @@
     }
 
     if (presetLib) libInput.dispatchEvent(new Event('input'));
+
+    // ============================================================
+    // QR Code Scanner Integration
+    // ============================================================
+    let html5QrcodeScanner = null;
+
+    document.getElementById('start-scanner-btn').addEventListener('click', () => {
+      const reader = document.getElementById('qr-reader');
+      reader.style.display = 'block';
+      document.getElementById('start-scanner-btn').style.display = 'none';
+
+      html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+      
+      html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    });
+
+    function onScanSuccess(decodedText, decodedResult) {
+      // Assuming QR code contains the Library ID directly, e.g., "LIB-MAIN"
+      // or a formatted string like "ACTION:CHECKIN;LIB:LIB-MAIN"
+      let parsedCode = decodedText;
+      if (decodedText.includes('LIB:')) {
+        const match = decodedText.match(/LIB:([A-Z0-9\-]+)/i);
+        if (match) parsedCode = match[1];
+      }
+      
+      libInput.value = parsedCode.toUpperCase();
+      libInput.dispatchEvent(new Event('input'));
+      
+      // Stop scanner
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear();
+      }
+      document.getElementById('qr-reader').style.display = 'none';
+      document.getElementById('start-scanner-btn').style.display = 'inline-block';
+      
+      // Auto-submit the hidden form to trigger geolocation & checkin logic
+      document.getElementById('submit-btn').click();
+    }
+
+    function onScanFailure(error) {
+      // handle scan failure, usually better to ignore and keep scanning
+    }
   </script>
 </body>
 

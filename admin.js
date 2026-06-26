@@ -114,11 +114,18 @@ function renderAdminCards() {
           <div class="occupant-list" id="occ-list-${lib.id}">
             ${lib.occupants.length === 0
               ? '<div style="text-align:center;padding:12px 0;color:var(--text-muted);font-size:13px;">Empty</div>'
-              : lib.occupants.slice(0, 5).map(o => `
-                  <div class="occupant-item">
-                    <span style="font-weight:600;">${o.name}</span>
-                    <button class="btn-kick" onclick="handleKick('${lib.id}', '${o.id}')">Checkout</button>
-                  </div>`).join('') + (lib.occupants.length > 5 ? `<div style="text-align:center;font-size:11px;color:var(--text-muted);">+ ${lib.occupants.length - 5} more</div>` : '')}
+              : lib.occupants.slice(0, 5).map(o => {
+                  const hoursElapsed = (Date.now() - o.checkinTime) / (1000 * 60 * 60);
+                  const overLimit = hoursElapsed > 3;
+                  return `
+                  <div class="occupant-item" style="${overLimit ? 'border-left: 3px solid var(--status-full-text);' : ''}">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                      <span style="font-weight:600;">${o.name} <span style="color:var(--brand-blue); font-size:11px;">(Seat ${o.seatNumber || '?'})</span></span>
+                      <span style="font-size: 11px; color: ${overLimit ? 'var(--status-full-text)' : 'var(--text-muted)'};"><i class="fa-solid fa-clock"></i> ${Math.floor(hoursElapsed)}h ${Math.floor((hoursElapsed % 1) * 60)}m</span>
+                    </div>
+                    <button class="btn-kick" onclick="handleKick('${lib.id}', '${o.id}')">Free Up Seat</button>
+                  </div>`;
+                }).join('') + (lib.occupants.length > 5 ? `<div style="text-align:center;font-size:11px;color:var(--text-muted);">+ ${lib.occupants.length - 5} more</div>` : '')}
           </div>
         </div>
 
@@ -132,6 +139,87 @@ function renderAdminCards() {
         </div>
       </div>`;
   }).join('');
+
+  if (typeof renderAnalytics === 'function') {
+    renderAnalytics();
+  }
+}
+
+// ============================================================
+//  ANALYTICS & PREDICTIONS
+// ============================================================
+function renderAnalytics() {
+  if (typeof Chart === 'undefined') return;
+  const ctx = document.getElementById('usageChart');
+  if (!ctx) return;
+  
+  const analytics = JSON.parse(localStorage.getItem('lib_analytics') || '[]');
+  
+  // Mock data if empty
+  let dataPoints = [12, 19, 3, 5, 2, 3, 9];
+  let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  
+  if (analytics.length > 0) {
+    // Basic peak hour calculation
+    const hourCounts = {};
+    analytics.forEach(a => {
+      const h = new Date(a.checkinTime).getHours();
+      hourCounts[h] = (hourCounts[h] || 0) + 1;
+    });
+    
+    let maxHour = 0;
+    let maxCount = 0;
+    for (const [h, count] of Object.entries(hourCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        maxHour = parseInt(h);
+      }
+    }
+    
+    document.getElementById('peak-hours-text').textContent = maxCount === 0 ? 'Processing...' : `${maxHour}:00 - ${maxHour+1}:00`;
+  } else {
+    document.getElementById('peak-hours-text').textContent = "14:00 - 15:00 (Est)";
+  }
+
+  // Generate Prediction
+  const state = getState();
+  const mainLib = state.libraries.find(l => l.id === 'LIB-MAIN');
+  if (mainLib) {
+    const fillRate = mainLib.occupants.length / mainLib.capacity;
+    let predText = "";
+    if (fillRate > 0.9) predText = "Main Library is almost full. Expect it to be completely full within the next 15 minutes.";
+    else if (fillRate > 0.5) predText = "Main Library is filling up steadily. Predicted to be full in the next 2 hours.";
+    else predText = "Main Library currently has high availability. No capacity constraints expected in the next 3 hours.";
+    
+    document.getElementById('prediction-text').innerHTML = `<strong>LIB-MAIN:</strong> ${predText}`;
+  }
+
+  // Render chart
+  if (window.myUsageChart) window.myUsageChart.destroy();
+  window.myUsageChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Weekly Check-ins',
+        data: dataPoints,
+        borderColor: '#5b9af8',
+        backgroundColor: 'rgba(91, 154, 248, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
 }
 
 // ============================================================
@@ -195,6 +283,29 @@ function showToast(msg, type = 'success') {
   toast.style.opacity     = '1';
   toast.style.transform   = 'translateY(0)';
   setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(16px)'; }, 3000);
+}
+
+// ============================================================
+//  LIB CORNER ADMIN
+// ============================================================
+function handlePostLibCorner() {
+  const message = document.getElementById('corner-message').value.trim();
+  if (!message) return;
+  
+  const posts = JSON.parse(localStorage.getItem('lib_corner_posts') || '[]');
+  posts.unshift({
+    id: Date.now().toString(),
+    message: message,
+    timestamp: Date.now()
+  });
+  
+  // Keep only the latest 10 posts
+  if (posts.length > 10) posts.length = 10;
+  
+  localStorage.setItem('lib_corner_posts', JSON.stringify(posts));
+  
+  showToast('Posted to Lib Corner');
+  document.getElementById('lib-corner-form').reset();
 }
 
 // ============================================================

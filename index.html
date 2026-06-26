@@ -116,6 +116,8 @@
         <span class="nav-link-short">Check In</span>
       </a>
 
+
+
       <!-- Notification Bell -->
       <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center;">
         <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
@@ -147,15 +149,22 @@
   <div class="page-hero" id="dashboard-hero">
     <!-- Slideshow layers -->
     <div class="hero-slide" id="dash-slide-0"
-      style="background-image: url('backdrop.jpg'); background-position: center 40%;"></div>
+      style="background-image: url('Shelve1.jpeg'); background-position: center 40%;"></div>
     <div class="hero-slide" id="dash-slide-1"
-      style="background-image: url('JOEY-SHOT-IT-10-1024x683.jpg'); background-position: center 30%;"></div>
+      style="background-image: url('Shelve2.jpeg'); background-position: center 40%;"></div>
     <div class="hero-slide" id="dash-slide-2"
-      style="background-image: url('images.jfif'); background-position: center 40%;"></div>
+      style="background-image: url('shelve3.jpeg'); background-position: center 40%;"></div>
     <div class="hero-slide" id="dash-slide-3"
-      style="background-image: url('images (1).jfif'); background-position: center 40%;"></div>
+      style="background-image: url('seats.jpeg'); background-position: center 40%;"></div>
     <div class="hero-slide" id="dash-slide-4"
-      style="background-image: url('images (2).jfif'); background-position: center 40%;"></div>
+      style="background-image: url('Bindery 1.jpeg'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-5"
+      style="background-image: url('Disability.jpeg'); background-position: center 40%;"></div>
+    <div class="hero-slide" id="dash-slide-6"
+      style="background-image: url('WhatsApp Image 2026-02-25 at 17.01.35 (1).jpeg'); background-position: center 40%;">
+    </div>
+    <div class="hero-slide" id="dash-slide-7"
+      style="background-image: url('opac.jpeg'); background-position: center 40%;"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1>UENR LibraTrack Dashboard</h1>
@@ -168,6 +177,9 @@
       <span class="hero-dot" onclick="dashGoToSlide(2)"></span>
       <span class="hero-dot" onclick="dashGoToSlide(3)"></span>
       <span class="hero-dot" onclick="dashGoToSlide(4)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(5)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(6)"></span>
+      <span class="hero-dot" onclick="dashGoToSlide(7)"></span>
     </div>
   </div>
 
@@ -184,6 +196,17 @@
     <div class="stat-item">
       <div class="stat-label">Available Spots</div>
       <div class="stat-value" id="total-available">—</div>
+    </div>
+  </div>
+
+  <!-- LIB CORNER -->
+  <div class="card fade-in" style="margin-bottom: 40px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+      <h3 style="margin:0; color:var(--brand-blue);"><i class="fa-solid fa-bullhorn"></i> Lib Corner</h3>
+      <span style="font-size:12px; color:var(--text-secondary);">Latest Updates</span>
+    </div>
+    <div id="lib-corner-feed" style="display:flex; flex-direction:column; gap:12px;">
+      <!-- Injected by app.js -->
     </div>
   </div>
 
@@ -204,14 +227,53 @@
           style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i
             class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
       </div>
-      <ol style="padding-left: 20px; color: var(--text-secondary); line-height: 1.8; font-size: 15px;">
-        <li style="margin-bottom: 12px;"><strong>Rule 1:</strong> Don't enter the Library with food or water</li>
-        <li style="margin-bottom: 12px;"><strong>Rule 2:</strong> Enter the Library gently.</li>
-        <li style="margin-bottom: 12px;"><strong>Rule 3:</strong> Keep your phones on Silent or Vibrate </li>
-        <li style="margin-bottom: 12px;"><strong>Rule 4:</strong> Avoid loud conversations</li>
-        <li style="margin-bottom: 12px;"><strong>Rule 5:</strong> When leaving, please click on Check Out to free
-          up your seat for others.</li>
-      </ol>
+      <div style="color: var(--text-secondary); line-height: 1.8; font-size: 15px; max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+        <h4 style="color: var(--text-primary); margin-top: 0; margin-bottom: 12px; font-size: 16px;">1.14 GENERAL RULES AND REGULATIONS OF THE LIBRARY</h4>
+        <ul style="padding-left: 20px; margin-bottom: 24px;">
+          <li style="margin-bottom: 8px;">No borrowing is allowed for regular students during inter-semester break</li>
+          <li style="margin-bottom: 8px;">All borrowed items are to be returned to the library three days before the end of every semester</li>
+          <li style="margin-bottom: 8px;">Failure to return all library books may result in withholding the examination results of the user</li>
+          <li style="margin-bottom: 8px;">Orderly conduct must be maintained at all times in the library</li>
+          <li style="margin-bottom: 8px;">Library staff will inspect any item being taken out of the library</li>
+        </ul>
+        
+        <h4 style="color: var(--text-primary); margin-bottom: 12px; font-size: 16px;">1.15 USER CONDUCT</h4>
+        <p style="margin-bottom: 16px;">The University Library promises to maintain an atmosphere that is conducive enough to support learning and research activities. For this reason, our patrons are also expected to conform to certain standards of the library to ensure its effective use.</p>
+        <p style="margin-bottom: 12px; font-weight: 600; color: var(--text-primary);">The following conducts are not permitted at any of our libraries:</p>
+        <ul style="padding-left: 20px; margin-bottom: 12px;">
+          <li style="margin-bottom: 8px;">Noise-making within and around the library is prohibited. Users are to observe silence always</li>
+          <li style="margin-bottom: 8px;">No food or drink is allowed in the library</li>
+          <li style="margin-bottom: 8px;">Books consulted should not be returned to shelves. They should be left on the tables</li>
+          <li style="margin-bottom: 8px;">Firearms and other offensive weapons are not allowed in the library</li>
+          <li style="margin-bottom: 8px;">The use of mobile phones/radios in the library is prohibited</li>
+          <li style="margin-bottom: 8px;">Smoking is prohibited in the library</li>
+          <li style="margin-bottom: 8px;">No seat should be reserved for any user</li>
+          <li style="margin-bottom: 8px;">Exhibition of obscene materials in the library is prohibited</li>
+          <li style="margin-bottom: 8px;">Any book recalled shall be returned within 72 hours or a fine will be imposed after three days</li>
+          <li style="margin-bottom: 8px;">Readers may not enter staff offices except an invitation has been given</li>
+          <li style="margin-bottom: 8px;">Indecent dressing in the library is not allowed</li>
+          <li style="margin-bottom: 8px;">Any other behavior that interferes with the right of others to enjoy and use the library.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEATMAP MODAL -->
+  <div class="modal-overlay" id="heatmap-modal" onclick="if(event.target===this)closeHeatmapModal()">
+    <div class="modal-box guide-modal-box" style="max-width: 600px; text-align: center; overflow: hidden; display: flex; flex-direction: column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; flex-shrink: 0;">
+        <h3 id="heatmap-title" style="margin: 0;"><i class="fa-solid fa-map"></i> Seat Heatmap</h3>
+        <button onclick="closeHeatmapModal()"
+          style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i
+            class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
+      </div>
+      <div style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary); flex-shrink: 0;">
+        <span style="display:inline-block; width:12px; height:12px; background:var(--brand-green); margin-right:4px; border-radius: 2px;"></span> Occupied
+        <span style="display:inline-block; width:12px; height:12px; background:var(--status-full-text); margin-right:4px; margin-left: 12px; border-radius: 2px;"></span> Vacant
+      </div>
+      <div id="heatmap-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; max-height: 50vh; overflow-y: auto; padding: 4px; padding-right: 12px; flex-grow: 1;">
+        <!-- Squares injected here -->
+      </div>
     </div>
   </div>
 
@@ -256,14 +318,10 @@
             </div>
           </div>
 
-          <div class="entry-code-box">
-             <div class="entry-code-label">Entrance Code</div>
-             <div class="entry-code-value">${lib.id}</div>
-          </div>
-
           <a href="checkin.html?lib=${lib.id}" class="checkin-btn" id="btn-${lib.id}">
             ${status === 'full' ? 'Library Full' : status === 'closed' ? 'Library Closed' : 'Check in Now'}
           </a>
+          <button class="glowing-btn" style="width:100%; margin-top: 10px; background: var(--brand-blue); border: none; color: white;" onclick="openHeatmapModal('${lib.id}')"><i class="fa-solid fa-map"></i> View Seat Heatmap</button>
         </div>`;
     }
 
@@ -341,8 +399,58 @@
       document.body.style.overflow = '';
     }
 
+    // Heatmap Logic
+    function openHeatmapModal(libId) {
+      const lib = getLibrary(libId);
+      if (!lib) return;
+      document.getElementById('heatmap-title').innerHTML = `<i class="fa-solid fa-map"></i> ${lib.name} Heatmap`;
+      
+      const grid = document.getElementById('heatmap-grid');
+      grid.innerHTML = '';
+      
+      const occupiedSeats = lib.occupants.map(o => o.seatNumber);
+      
+      for (let i = 1; i <= lib.capacity; i++) {
+        const isOccupied = occupiedSeats.includes(i);
+        const color = isOccupied ? 'var(--brand-green)' : 'var(--status-full-text)';
+        const opacity = isOccupied ? '1' : '0.6';
+        
+        const square = document.createElement('div');
+        square.style.cssText = `
+          aspect-ratio: 1;
+          background-color: ${color};
+          opacity: ${opacity};
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 600;
+          color: white;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        `;
+        square.textContent = i;
+        if (isOccupied) {
+          const occupant = lib.occupants.find(o => o.seatNumber === i);
+          square.title = `Seat ${i} - Occupied by ${occupant.name}`;
+          square.style.cursor = 'help';
+        } else {
+          square.title = `Seat ${i} - Vacant`;
+        }
+        grid.appendChild(square);
+      }
+      
+      document.getElementById('heatmap-modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeHeatmapModal() {
+      document.getElementById('heatmap-modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
     /* ── Dashboard Hero Slideshow ───────────────────────────── */
-    const DASH_SLIDE_COUNT = 5;
+    const DASH_SLIDE_COUNT = 8;
     let dashCurrentSlide = 0;
     let dashTimer = null;
 

@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="uenr.png" />
   <link rel="apple-touch-icon" href="uenr.png" />
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -91,9 +91,12 @@
   <div id="admin-screen" style="display:none">
     <div class="page-hero" id="admin-hero">
       <!-- Slideshow layers: three images that cross-fade smoothly -->
-      <div class="hero-slide" id="slide-0" style="background-image: url('JOEY-SHOT-IT-10-1024x683.jpg'); background-position: center 30%;"></div>
-      <div class="hero-slide" id="slide-1" style="background-image: url('images.jfif'); background-position: center 40%;"></div>
-      <div class="hero-slide" id="slide-2" style="background-image: url('images (1).jfif'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-0" style="background-image: url('Shelve1.jpeg'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-1" style="background-image: url('Shelve2.jpeg'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-2" style="background-image: url('seats.jpeg'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-3" style="background-image: url('Bindery 1.jpeg'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-4" style="background-image: url('Disability.jpeg'); background-position: center 40%;"></div>
+      <div class="hero-slide" id="slide-5" style="background-image: url('opac.jpeg'); background-position: center 40%;"></div>
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <h1>UENR LibraTrack Admin</h1>
@@ -104,10 +107,55 @@
         <span class="hero-dot active" onclick="goToSlide(0)"></span>
         <span class="hero-dot" onclick="goToSlide(1)"></span>
         <span class="hero-dot" onclick="goToSlide(2)"></span>
+        <span class="hero-dot" onclick="goToSlide(3)"></span>
+        <span class="hero-dot" onclick="goToSlide(4)"></span>
+        <span class="hero-dot" onclick="goToSlide(5)"></span>
       </div>
     </div>
 
     <div class="admin-grid" id="admin-grid"></div>
+
+    <!-- ANALYTICS SECTION -->
+    <div class="settings-section no-print" style="margin-top: 40px;">
+      <div class="card">
+        <h3><i class="fa-solid fa-chart-line"></i> Analytics & Predictions</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">Track library usage trends and estimate availability based on check-in velocity.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div>
+            <h4 style="margin-bottom: 12px;">Usage Activity</h4>
+            <canvas id="usageChart" style="width: 100%; max-height: 250px;"></canvas>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: var(--bg-card-hover); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <h4 style="margin-bottom: 8px; color: var(--brand-blue);"><i class="fa-solid fa-clock"></i> Peak Hours</h4>
+              <div id="peak-hours-text" style="font-size: 24px; font-weight: 700; color: var(--text-primary);">Processing...</div>
+              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Based on check-in frequency</div>
+            </div>
+            
+            <div style="background: var(--bg-card-hover); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <h4 style="margin-bottom: 8px; color: var(--status-open-text);"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Availability Prediction</h4>
+              <div id="prediction-text" style="font-size: 16px; line-height: 1.5; color: var(--text-primary);">Analyzing current occupancy velocity to predict library fill times...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIB CORNER ADMIN -->
+    <div class="settings-section no-print">
+      <div class="card">
+        <h3><i class="fa-solid fa-bullhorn"></i> Post to Lib Corner</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">Add a new announcement to the public Lib Corner board on the dashboard.</p>
+        <form id="lib-corner-form" onsubmit="event.preventDefault(); handlePostLibCorner();">
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-input" id="corner-message" rows="3" placeholder="e.g. New books have arrived..." required></textarea>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 12px 24px;" type="submit">Post Announcement</button>
+        </form>
+      </div>
+    </div>
 
     <div class="settings-section no-print">
       <div class="card">
@@ -222,7 +270,7 @@
     document.getElementById('pin-input').focus();
 
     /* ── Hero Slideshow ────────────────────────────────────── */
-    const SLIDE_COUNT = 3;
+    const SLIDE_COUNT = 6;
     let currentSlide = 0;
     let slideshowTimer = null;
 

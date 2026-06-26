@@ -197,7 +197,11 @@ function updateNavAuth() {
         navLinks.appendChild(logoutBtn);
       }
       
-      // Also show user name somewhere if possible, maybe add a greeting
+      // Update Gamification Points
+      const pointsEl = document.getElementById('user-points');
+      if (pointsEl && typeof getStudentScore === 'function') {
+        pointsEl.textContent = getStudentScore(user.id);
+      }
     }
   }
 }
@@ -256,6 +260,11 @@ function processCheckIn(libId, studentId, studentName, role = 'student') {
   const existingIdx = lib.occupants.findIndex(o => o.id.toLowerCase() === studentId.toLowerCase());
   if (existingIdx !== -1) {
     // Check out
+    const occupant = lib.occupants[existingIdx];
+    const duration = Date.now() - occupant.checkinTime;
+    recordAnalytics({ libId: lib.id, studentId: occupant.id, duration: duration, checkinTime: occupant.checkinTime, checkoutTime: Date.now() });
+    awardPoints(occupant.id, duration);
+    
     lib.occupants.splice(existingIdx, 1);
     saveState(state);
     return {
@@ -294,17 +303,55 @@ function processCheckIn(libId, studentId, studentName, role = 'student') {
     };
   }
 
+  // Auto-assign seat
+  const occupiedSeats = lib.occupants.map(o => o.seatNumber);
+  let seatNumber = null;
+  for (let i = 1; i <= lib.capacity; i++) {
+    if (!occupiedSeats.includes(i)) {
+      seatNumber = i;
+      break;
+    }
+  }
+
   // Check in
-  lib.occupants.push({ id: studentId, name: studentName || studentId, role: role, checkinTime: Date.now() });
+  lib.occupants.push({ id: studentId, name: studentName || studentId, role: role, checkinTime: Date.now(), seatNumber: seatNumber });
   saveState(state);
 
   return {
     success: true,
     action: 'checkin',
-    message: `Welcome to ${lib.name}! You have been checked in. Enjoy your study session.`,
+    message: `Welcome to ${lib.name}! You have been checked in to Seat ${seatNumber}. Enjoy your study session.`,
     library: lib,
-    seatNumber: lib.occupants.length,
+    seatNumber: seatNumber,
   };
+}
+
+// ============================================================
+//  ANALYTICS & GAMIFICATION
+// ============================================================
+function recordAnalytics(event) {
+  const analytics = JSON.parse(localStorage.getItem('lib_analytics') || '[]');
+  analytics.push(event);
+  localStorage.setItem('lib_analytics', JSON.stringify(analytics));
+}
+
+function getAnalytics() {
+  return JSON.parse(localStorage.getItem('lib_analytics') || '[]');
+}
+
+function awardPoints(studentId, duration) {
+  // Award 5 points per minute studied
+  const minutes = Math.floor(duration / (1000 * 60));
+  if (minutes > 0) {
+    const scores = JSON.parse(localStorage.getItem('lib_scores') || '{}');
+    scores[studentId] = (scores[studentId] || 0) + (minutes * 5);
+    localStorage.setItem('lib_scores', JSON.stringify(scores));
+  }
+}
+
+function getStudentScore(studentId) {
+  const scores = JSON.parse(localStorage.getItem('lib_scores') || '{}');
+  return scores[studentId] || 0;
 }
 
 // ============================================================
@@ -389,6 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof renderAll === 'function') renderAll();
   });
   
+  if (typeof renderLibCorner === 'function') renderLibCorner();
+  
   // Close settings dropdown if clicked outside
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.nav-settings')) {
@@ -409,6 +458,30 @@ function toggleMobileMenu() {
 // ============================================================
 //  NOTIFICATIONS POLLING & UI
 // ============================================================
+
+function renderLibCorner() {
+  const feed = document.getElementById('lib-corner-feed');
+  if (!feed) return;
+  
+  const posts = JSON.parse(localStorage.getItem('lib_corner_posts') || '[]');
+  
+  if (posts.length === 0) {
+    feed.innerHTML = '<div style="color:var(--text-muted); font-size:13px; text-align:center;">No recent announcements.</div>';
+    return;
+  }
+  
+  feed.innerHTML = posts.map((p, idx) => {
+    const d = new Date(p.timestamp);
+    const timeStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const color = idx % 2 === 0 ? 'var(--brand-blue)' : 'var(--brand-green)';
+    return `
+      <div style="padding:12px; border-left:3px solid ${color}; background:var(--bg-card-hover); border-radius:4px;">
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">${timeStr}</div>
+        <div style="font-size:14px; color:var(--text-primary); line-height: 1.5;">${p.message}</div>
+      </div>
+    `;
+  }).join('');
+}
 
 function updateNotificationBadge() {
   if (typeof getUnreadCount !== 'function') return; // notifications.js might not be loaded
