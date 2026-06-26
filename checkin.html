@@ -28,6 +28,83 @@
     .checkin-tip strong {
       color: var(--text-primary);
     }
+
+    /* QR Scanner custom styles */
+    #qr-reader {
+      border: 1px solid var(--border) !important;
+      background: var(--bg-card);
+      border-radius: var(--radius-md) !important;
+      box-shadow: var(--shadow-sm);
+      padding-bottom: 15px;
+    }
+    #qr-reader__dashboard_section_csr span {
+      font-family: var(--font-body);
+      color: var(--text-secondary);
+    }
+    body.dark-theme #qr-reader__dashboard_section_csr span {
+      color: var(--text-muted);
+    }
+    #qr-reader button {
+      background: var(--brand-blue);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-weight: 600;
+      cursor: pointer;
+      margin: 5px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    #qr-reader button:hover {
+      background: var(--brand-blue-hover);
+      transform: translateY(-1px);
+    }
+    #html5-qrcode-button-camera-stop {
+      background: var(--brand-burgundy) !important;
+    }
+    #html5-qrcode-button-camera-stop:hover {
+      background: #880f30 !important;
+    }
+    #qr-reader select {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0,0,0,0.1);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 500;
+      margin: 5px;
+      outline: none;
+    }
+    body.dark-theme #qr-reader select {
+      background: rgba(15, 23, 42, 0.5);
+      border-color: rgba(255,255,255,0.1);
+      color: white;
+    }
+    #qr-reader a {
+      color: var(--brand-blue);
+      font-weight: 600;
+      text-decoration: none;
+      margin: 10px;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(30, 64, 175, 0.1);
+      transition: var(--transition);
+    }
+    body.dark-theme #qr-reader a {
+      color: #93c5fd;
+      background: rgba(147, 197, 253, 0.1);
+    }
+    #qr-reader a:hover {
+      background: rgba(30, 64, 175, 0.2);
+      text-decoration: none;
+    }
+    body.dark-theme #qr-reader a:hover {
+      background: rgba(147, 197, 253, 0.2);
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="uenr.png" />
@@ -294,7 +371,13 @@
       document.getElementById('start-scanner-btn').style.display = 'none';
 
       html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+        "qr-reader", { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          videoConstraints: {
+            facingMode: "environment"
+          }
+        }, false);
 
       html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     });
