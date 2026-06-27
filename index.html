@@ -57,6 +57,48 @@
 </head>
 
 <body>
+  <!-- SPLASH SCREEN -->
+  <style>
+    @keyframes splashLogoPulse {
+      0% { transform: scale(1); opacity: 0.8; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+      50% { transform: scale(1.1); opacity: 1; box-shadow: 0 16px 40px rgba(30, 64, 175, 0.4); }
+      100% { transform: scale(1); opacity: 0.8; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    }
+    #pwa-splash-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: var(--bg-body, #f8fafc);
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    }
+    .dark-theme #pwa-splash-screen {
+      background: #0f172a;
+    }
+    #pwa-splash-screen img {
+      width: 100px;
+      height: 100px;
+      border-radius: 24px;
+      background: white;
+      padding: 8px;
+      animation: splashLogoPulse 1.5s ease-in-out infinite;
+    }
+    #pwa-splash-screen h2 {
+      margin-top: 24px;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+  </style>
+  <div id="pwa-splash-screen">
+    <img src="uenr.png" alt="UENR Logo" />
+    <h2>LibraTrack</h2>
+  </div>
 
   <!-- PWA Install Modal (Glassmorphism) -->
   <style>
@@ -82,7 +124,7 @@
           class="fa-solid fa-xmark"></i></button>
 
       <img src="uenr.png" alt="UENR Logo"
-        style="width: 80px; height: 80px; border-radius: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); margin-bottom: 20px; background: white; padding: 6px;">
+        style="width: 80px; height: 80px; border-radius: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); margin-bottom: 20px; background: white; padding: 6px; animation: splashLogoPulse 2s ease-in-out infinite;">
 
       <h3
         style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: -0.5px;">
@@ -472,6 +514,18 @@
 
     // Start immediately on page load
     dashGoToSlide(0);
+
+    // Hide Splash Screen after loading
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('pwa-splash-screen');
+        if (splash) {
+          splash.style.opacity = '0';
+          splash.style.visibility = 'hidden';
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 1500); // show splash for 1.5 seconds minimum
+    });
   </script>
 </body>
 
