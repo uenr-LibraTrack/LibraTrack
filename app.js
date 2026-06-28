@@ -606,3 +606,44 @@ function installPWA() {
     });
   }
 }
+
+// ============================================================
+// GLOBAL PAGE LOADER LOGIC
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Create loader element
+  const loader = document.createElement('div');
+  loader.id = 'global-page-loader';
+  loader.innerHTML = `
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading...</div>
+  `;
+  document.body.appendChild(loader);
+
+  // Intercept local link clicks to show loader
+  document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      // Show loader if navigating to a local page (excluding anchors, blank targets, etc)
+      if (link.hostname === window.location.hostname &&
+          !link.href.includes('#') &&
+          link.target !== '_blank' &&
+          !link.hasAttribute('download')) {
+        loader.classList.add('active');
+      }
+    });
+  });
+});
+
+// Also show loader on beforeunload just in case form submissions happen
+window.addEventListener('beforeunload', () => {
+  const loader = document.getElementById('global-page-loader');
+  if (loader) loader.classList.add('active');
+});
+
+// Hide loader when page is fully loaded (e.g. from back-forward cache)
+window.addEventListener('pageshow', (e) => {
+  const loader = document.getElementById('global-page-loader');
+  if (loader && e.persisted) {
+    loader.classList.remove('active');
+  }
+});
