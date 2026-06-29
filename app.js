@@ -199,14 +199,12 @@ function updateNavAuth() {
       logoutBtn.id = 'nav-logout-btn';
       logoutBtn.className = 'nav-link';
       logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> <span class="nav-link-full">Logout</span>';
+      logoutBtn.style.display = 'flex';
+      logoutBtn.style.alignItems = 'center';
+      logoutBtn.style.gap = '8px';
       logoutBtn.onclick = (e) => { e.preventDefault(); logoutUser(); };
       
-      const settingsOrTheme = document.querySelector('.nav-settings') || document.querySelector('.theme-switch');
-      if (settingsOrTheme) {
-        navLinks.insertBefore(logoutBtn, settingsOrTheme);
-      } else {
-        navLinks.appendChild(logoutBtn);
-      }
+      navLinks.appendChild(logoutBtn);
       
       // Update Gamification Points
       const pointsEl = document.getElementById('user-points');

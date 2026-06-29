@@ -227,16 +227,18 @@
       </a>
 
       <!-- Notification Bell -->
-      <a href="notifications.html" class="nav-link active" style="position:relative; display:flex; align-items:center;">
+      <a href="notifications.html" class="nav-link active" style="position:relative; display:flex; align-items:center; gap: 8px;">
         <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
+        <span class="nav-link-full">Notification</span>
         <span id="nav-bell-badge" class="bell-badge" style="display:none;">0</span>
       </a>
 
       <div class="nav-settings">
         <button class="nav-link" id="settings-btn"
-          style="background:transparent; border:none; cursor:pointer; padding: 8px;"
+          style="background:transparent; border:none; cursor:pointer; padding: 8px; display:flex; align-items:center; gap: 8px;"
           onclick="document.getElementById('settings-dropdown-nav').classList.toggle('show')">
           <i class="fa-solid fa-gear" style="font-size: 18px;"></i>
+          <span class="nav-link-full">Settings</span>
         </button>
         <div id="settings-dropdown-nav" class="settings-dropdown">
           <div class="settings-item">
