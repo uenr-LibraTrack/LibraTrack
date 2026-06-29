@@ -1,4 +1,4 @@
-const CACHE_NAME = 'libratrack-v6';
+const CACHE_NAME = 'libratrack-v7';
 
 const PRECACHE_ASSETS = [
   './',

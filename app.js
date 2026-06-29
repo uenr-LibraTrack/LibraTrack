@@ -169,18 +169,30 @@ function logoutUser() {
 
 function requireAuth() {
   const user = getCurrentUser();
-  // If no user and not on login page, redirect
-  if (!user && !window.location.pathname.endsWith('login.html')) {
-    window.location.href = 'login.html';
+  const path = window.location.pathname;
+  const isPublicPage = path.endsWith('entry.html') || path.endsWith('index.html') || path.endsWith('login.html') || path.endsWith('signup.html') || path === '/' || path.includes('index.html');
+  
+  // If no user and not on public page, redirect to entry modal
+  if (!user && !isPublicPage) {
+    window.location.href = 'entry.html';
   }
+  
+  // If user is on index.html but NOT logged in, redirect them to entry.html
+  // This ensures the dashboard is never seen without logging in.
+  if (!user && (path.endsWith('index.html') || path === '/')) {
+    window.location.href = 'entry.html';
+  }
+
   return user;
 }
 
 function updateNavAuth() {
   const user = getCurrentUser();
+  const navLinks = document.querySelector('.nav-links');
+  if (!navLinks) return;
+
   if (user) {
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks && !document.getElementById('nav-logout-btn')) {
+    if (!document.getElementById('nav-logout-btn')) {
       // Add logout button
       const logoutBtn = document.createElement('a');
       logoutBtn.href = '#';
@@ -189,7 +201,6 @@ function updateNavAuth() {
       logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> <span class="nav-link-full">Logout</span>';
       logoutBtn.onclick = (e) => { e.preventDefault(); logoutUser(); };
       
-      // Insert before settings dropdown or theme switch
       const settingsOrTheme = document.querySelector('.nav-settings') || document.querySelector('.theme-switch');
       if (settingsOrTheme) {
         navLinks.insertBefore(logoutBtn, settingsOrTheme);
@@ -203,6 +214,9 @@ function updateNavAuth() {
         pointsEl.textContent = getStudentScore(user.id);
       }
     }
+  } else {
+    // User is NOT logged in.
+    // We no longer inject a modal here because requireAuth() handles redirecting to entry.html
   }
 }
 

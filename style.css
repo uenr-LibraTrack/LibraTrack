@@ -1926,4 +1926,116 @@ body.dark-theme .mobile-menu-btn span {
   .hero-content h1, .page-hero h1 { font-size: 32px; }
   .settings-section { padding: 0 24px 40px; }
 }
+}
 
+/* ============================================================
+   GLASSMORPHISM AUTH MODAL
+   ============================================================ */
+.glass-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glass-modal {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  color: white;
+  max-width: 400px;
+  width: 90%;
+  animation: slideUp 0.4s ease-out;
+}
+
+body.dark-theme .glass-modal {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body:not(.dark-theme) .glass-modal {
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text-primary);
+}
+
+.glass-modal h2 {
+  margin-top: 0;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.glass-modal p {
+  color: inherit;
+  opacity: 0.8;
+  margin-bottom: 30px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn-glass {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.primary-glass {
+  background: rgba(37, 99, 235, 0.8);
+  border: 1px solid rgba(37, 99, 235, 0.5);
+  color: white;
+}
+
+.primary-glass:hover {
+  background: rgba(37, 99, 235, 1);
+  transform: translateY(-2px);
+  color: white;
+}
+
+.secondary-glass {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: inherit;
+}
+
+body:not(.dark-theme) .secondary-glass {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.secondary-glass:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+body:not(.dark-theme) .secondary-glass:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

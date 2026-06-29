@@ -98,24 +98,28 @@
     <div class="card login-panel">
       <div class="login-brand">
         <img src="uenr.png" alt="UENR Logo" />
-        <h2>UENR LibraTrack</h2>
-        <p>Sign in with your Library Email and 4-digit code</p>
+        <h2 id="login-title">Sign In</h2>
+        <p id="login-desc">Sign in to your account</p>
       </div>
 
       <form id="login-form" novalidate>
         <div class="form-group">
-          <label class="form-label" for="user-id">LIBRARY EMAIL</label>
-          <input class="form-input" id="user-id" type="text" placeholder="LIBRARY EMAIL" autocomplete="username"
+          <label class="form-label" id="label-id" for="user-id">Email</label>
+          <input class="form-input" id="user-id" type="text" placeholder="Enter Email" autocomplete="username"
             required />
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="user-password">4-Digit Code</label>
-          <input class="form-input" id="user-password" type="password" placeholder="Enter 4-digit code"
-            autocomplete="current-password" maxlength="4" inputmode="numeric" required />
+          <label class="form-label" id="label-password" for="user-password">Password / Code</label>
+          <input class="form-input" id="user-password" type="password" placeholder="Enter Code"
+            autocomplete="current-password" required />
         </div>
 
         <button type="submit" class="btn-submit" id="login-btn">Sign In</button>
+        
+        <div id="signup-link-container" style="text-align: center; margin-top: 15px; display: none;">
+          <p style="color: var(--text-secondary); font-size: 14px;">Don't have an account? <a href="signup.html" style="color: var(--brand-blue); text-decoration: none; font-weight: 600;">Sign Up</a></p>
+        </div>
       </form>
 
       <div class="alert" id="login-alert" style="margin-top:20px;">
@@ -137,6 +141,30 @@
     const alertTitle = document.getElementById('login-alert-title');
     const alertMsg = document.getElementById('login-alert-msg');
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const roleParam = urlParams.get('role') || 'student';
+
+    if (roleParam === 'admin') {
+      document.getElementById('login-title').textContent = 'Admin Sign In';
+      document.getElementById('login-desc').textContent = 'Sign in with your Library Email and 4-digit code';
+      document.getElementById('label-id').textContent = 'LIBRARY EMAIL';
+      idInput.placeholder = 'LIBRARY EMAIL';
+      document.getElementById('label-password').textContent = '4-DIGIT CODE';
+      passInput.placeholder = 'Enter 4-digit code';
+      passInput.maxLength = 4;
+      passInput.inputMode = 'numeric';
+    } else {
+      document.getElementById('login-title').textContent = 'Student Sign In';
+      document.getElementById('login-desc').textContent = 'Sign in with your Student Email and Password';
+      document.getElementById('label-id').textContent = 'STUDENT EMAIL';
+      idInput.placeholder = 'e.g. index@st.uenr.edu.gh';
+      document.getElementById('label-password').textContent = 'PASSWORD / PIN';
+      passInput.placeholder = 'Enter your password';
+      passInput.removeAttribute('maxlength');
+      passInput.removeAttribute('inputmode');
+      document.getElementById('signup-link-container').style.display = 'block';
+    }
+
     function showAlert(type, title, msg) {
       alertBox.className = `alert show alert-${type}`;
       alertTitle.innerHTML = title;
@@ -149,35 +177,46 @@
       const password = passInput.value.trim();
 
       if (!userId) {
-        showAlert('error', 'Missing ID', 'Please enter your Library Email');
+        showAlert('error', 'Missing ID', 'Please enter your Email');
         return;
       }
       if (!password) {
-        showAlert('error', 'Missing Code', 'Please enter your 4-digit Code');
+        showAlert('error', 'Missing Code', 'Please enter your Password or Code');
         return;
       }
 
-      // Basic validation mockup
-      let role = 'student';
+      let role = roleParam;
       let name = userId.split('@')[0];
 
-      // Allow specific admin login
-      if (userId.toLowerCase() === 'admin' || userId.toLowerCase() === 'library@uenr.edu.gh') {
-        if (password !== '2011') {
-          showAlert('error', 'Authentication Failed', 'Incorrect 4-digit code. Please try again.');
+      if (role === 'admin') {
+        // Use hardcoded admin login
+        if ((userId.toLowerCase() !== 'admin' && !userId.toLowerCase().includes('library@')) || password !== '2011') {
+          showAlert('error', 'Authentication Failed', 'Incorrect email or 4-digit code. Please try again.');
           return;
         }
-        role = 'admin';
         name = 'Administrator';
-      } else if (!userId.toLowerCase().includes('@uenr.edu.gh') && !/^\d{6,10}$/.test(userId)) {
-        // Must be email ending in @uenr.edu.gh (including st.uenr.edu.gh) or a numeric ID of 6-10 digits
-        showAlert('error', 'Invalid Entry', 'Please check your Email and 4-digit code.');
-        return;
-      }
+        loginUser(userId, name, role);
+        window.location.href = 'admin.html';
+      } else {
+        const ogText = document.getElementById('login-btn').innerHTML;
+        document.getElementById('login-btn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
+        document.getElementById('login-btn').disabled = true;
 
-      // Success mockup
-      loginUser(userId, name, role);
-      window.location.href = 'index.html';
+        // Use Supabase Auth directly
+        supabaseClient.auth.signInWithPassword({ email: userId, password: password })
+          .then(({ data: authData, error: authError }) => {
+            document.getElementById('login-btn').innerHTML = ogText;
+            document.getElementById('login-btn').disabled = false;
+
+            if (authError) {
+              showAlert('error', 'Login Failed', authError.message || 'Incorrect email or password.');
+            } else {
+              const fullName = authData.user?.user_metadata?.full_name || name;
+              loginUser(userId, fullName, role);
+              window.location.href = 'index.html';
+            }
+          });
+      }
     });
   </script>
 </body>
