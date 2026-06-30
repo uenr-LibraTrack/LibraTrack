@@ -18,11 +18,11 @@ const ICONS = ['<i class="fa-solid fa-book"></i>', '<i class="fa-solid fa-buildi
 // ============================================================
 //  GEOFENCING CONSTANTS
 // ============================================================
-// UENR Campus approximate coordinates
-const CAMPUS_LAT = 7.3399;
-const CAMPUS_LNG = -2.3267;
-// Radius in meters (e.g., 2000 meters = 2km)
-const GEOFENCE_RADIUS_METERS = 2000;
+// UENR Campus exact coordinates
+const CAMPUS_LAT = 7.34949;
+const CAMPUS_LNG = -2.343501;
+// Radius in meters (e.g., 1500 meters = 1.5km to cover campus but restrict outside)
+const GEOFENCE_RADIUS_METERS = 1500;
 
 /**
  * Calculates the distance between two coordinates in meters using the Haversine formula

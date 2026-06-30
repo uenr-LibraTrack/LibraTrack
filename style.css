@@ -1510,12 +1510,7 @@ body.dark-theme .btn-reset-lib:hover {
     font-size: 12px;
     padding: 6px 8px;
   }
-  .nav-link-full {
-    display: none; /* Shorten link text on mobile */
-  }
-  .nav-link-short {
-    display: inline;
-  }
+  /* Removed hiding of nav-link-full so names appear in mobile menu */
 }
 
 @media (max-width: 440px) {

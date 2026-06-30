@@ -339,6 +339,35 @@
       const pct = Math.min(occ.pct, 100);
       const progressCls = progressClass(status);
 
+      const user = getCurrentUser();
+      let isCheckedInHere = false;
+      let isCheckedInElsewhere = false;
+      if (user) {
+        isCheckedInHere = lib.occupants.some(o => o.id.toLowerCase() === user.id.toLowerCase());
+        const state = getState();
+        isCheckedInElsewhere = state.libraries.some(l => l.id !== lib.id && l.occupants.some(o => o.id.toLowerCase() === user.id.toLowerCase()));
+      }
+
+      let btnText = 'Check In Now';
+      let pointerEvents = 'auto';
+      let btnStyle = '';
+
+      if (isCheckedInHere) {
+        btnText = 'Check Out Now';
+      } else if (isCheckedInElsewhere) {
+        btnText = 'Checked in elsewhere';
+        pointerEvents = 'none';
+        btnStyle = 'background: var(--status-closed-bg); color: var(--status-closed-text); border-color: var(--border);';
+      } else if (status === 'full') {
+        btnText = 'Library Full';
+        pointerEvents = 'none';
+        btnStyle = 'background: var(--status-closed-bg); color: var(--status-closed-text); border-color: var(--border);';
+      } else if (status === 'closed') {
+        btnText = 'Library Closed';
+        pointerEvents = 'none';
+        btnStyle = 'background: var(--status-closed-bg); color: var(--status-closed-text); border-color: var(--border);';
+      }
+
       return `
         <div class="card library-card fade-in" id="card-${lib.id}">
           <div class="library-card-header">
@@ -361,8 +390,8 @@
             </div>
           </div>
 
-          <a href="checkin.html?lib=${lib.id}" class="checkin-btn" id="btn-${lib.id}">
-            ${status === 'full' ? 'Library Full' : status === 'closed' ? 'Library Closed' : 'Check in Now'}
+          <a href="checkin.html?lib=${lib.id}" class="checkin-btn" id="btn-${lib.id}" style="pointer-events: ${pointerEvents}; ${btnStyle}">
+            ${btnText}
           </a>
           <button class="glowing-btn" style="width:100%; margin-top: 10px; background: var(--brand-blue); border: none; color: white;" onclick="openHeatmapModal('${lib.id}')"><i class="fa-solid fa-map"></i> View Seat Heatmap</button>
         </div>`;
@@ -405,17 +434,39 @@
 
         const btnEl = document.getElementById(`btn-${lib.id}`);
         if (btnEl) {
-          btnEl.textContent = status === 'full' ? 'Library Full' : status === 'closed' ? 'Library Closed' : 'Check in Now';
-          if (status === 'closed' || status === 'full') {
-            btnEl.style.background = 'var(--status-closed-bg)';
-            btnEl.style.color = 'var(--status-closed-text)';
-            btnEl.style.borderColor = 'var(--border)';
-            btnEl.style.pointerEvents = 'none';
+          const user = getCurrentUser();
+          let isCheckedInHere = false;
+          let isCheckedInElsewhere = false;
+          if (user) {
+            isCheckedInHere = lib.occupants.some(o => o.id.toLowerCase() === user.id.toLowerCase());
+            isCheckedInElsewhere = state.libraries.some(l => l.id !== lib.id && l.occupants.some(o => o.id.toLowerCase() === user.id.toLowerCase()));
+          }
+
+          let btnText = 'Check In Now';
+          let pointerEvents = 'auto';
+          let btnStyle = '';
+
+          if (isCheckedInHere) {
+            btnText = 'Check Out Now';
+          } else if (isCheckedInElsewhere) {
+            btnText = 'Checked in elsewhere';
+            pointerEvents = 'none';
+            btnStyle = 'background: var(--status-closed-bg); color: var(--status-closed-text); border-color: var(--border);';
+          } else if (status === 'full') {
+            btnText = 'Library Full';
+            pointerEvents = 'none';
+            btnStyle = 'background: var(--status-closed-bg); color: var(--status-closed-text); border-color: var(--border);';
+          } else if (status === 'closed') {
+            btnText = 'Library Closed';
+            pointerEvents = 'none';
+            btnStyle = 'background: var(--status-closed-bg); color: var(--status-closed-text); border-color: var(--border);';
+          }
+
+          btnEl.textContent = btnText;
+          if (pointerEvents === 'none') {
+            btnEl.style.cssText = `pointer-events: none; ${btnStyle}`;
           } else {
-            btnEl.style.background = '';
-            btnEl.style.color = '';
-            btnEl.style.borderColor = '';
-            btnEl.style.pointerEvents = 'auto';
+            btnEl.style.cssText = '';
           }
         }
       });
