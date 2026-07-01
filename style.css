@@ -1412,6 +1412,42 @@ body.dark-theme .btn-reset-lib:hover {
   margin-top: 8px;
 }
 
+.social-icons {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.social-icons a {
+  color: var(--text-secondary);
+  font-size: 18px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+
+.social-icons a:hover {
+  transform: translateY(-4px);
+  color: white !important;
+  box-shadow: var(--shadow-button);
+}
+
+.social-icons a.fb:hover { background: #1877f2; border-color: #1877f2; }
+.social-icons a.tw:hover { background: #000000; border-color: #000000; } /* Using X / Twitter logo color */
+.social-icons a.ig:hover {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-color: transparent;
+}
+
 .motto-text {
   font-family: var(--font-heading);
   font-size: 13px;
@@ -1624,34 +1660,9 @@ body.dark-theme .bell-badge {
   box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3), inset 0 1px 1px rgba(255,255,255,0.3);
 }
 
-.glowing-btn::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 34px;
-  background: linear-gradient(135deg, var(--brand-blue), #60a5fa, var(--brand-blue));
-  background-size: 200% 200%;
-  z-index: -1;
-  filter: blur(10px);
-  opacity: 0.6;
-  animation: glowMove 3s linear infinite;
-  transition: opacity 0.3s ease;
-}
-
 .glowing-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
-}
-
-.glowing-btn:hover::before {
-  opacity: 0.9;
-  filter: blur(14px);
-}
-
-@keyframes glowMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  box-shadow: 0 8px 25px rgba(92, 64, 51, 0.3), inset 0 1px 1px rgba(255,255,255,0.4);
 }
 
 .guide-modal-box {
@@ -1786,11 +1797,18 @@ body.dark-theme .mobile-menu-btn span {
   .nav-link {
     width: 100%;
     text-align: left;
-    padding: 13px 16px;
+    padding: 13px 16px !important;
     font-size: 15px;
     border-radius: var(--radius-sm);
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
   }
-  .nav-link.primary { text-align: center; margin-top: 8px; }
+  .nav-link i {
+    width: 24px;
+    text-align: center;
+  }
+  .nav-link.primary { justify-content: center; margin-top: 8px; }
   .nav-settings { width: 100%; }
   .settings-dropdown {
     position: static;

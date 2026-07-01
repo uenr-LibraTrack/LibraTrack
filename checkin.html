@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Check In / Out – UENR LibraTrack</title>
+  <title>Check In – UENR LibraTrack</title>
   <meta name="description"
     content="Enter your student ID and library code to check in or out of a UENR campus study space." />
   <link rel="stylesheet" href="style.css?v=2" />
@@ -37,13 +37,16 @@
       box-shadow: var(--shadow-sm);
       padding-bottom: 15px;
     }
+
     #qr-reader__dashboard_section_csr span {
       font-family: var(--font-body);
       color: var(--text-secondary);
     }
+
     body.dark-theme #qr-reader__dashboard_section_csr span {
       color: var(--text-muted);
     }
+
     #qr-reader button {
       background: var(--brand-blue);
       color: white;
@@ -57,20 +60,24 @@
       transition: var(--transition);
       box-shadow: var(--shadow-sm);
     }
+
     #qr-reader button:hover {
       background: var(--brand-blue-hover);
       transform: translateY(-1px);
     }
+
     #html5-qrcode-button-camera-stop {
       background: var(--brand-burgundy) !important;
     }
+
     #html5-qrcode-button-camera-stop:hover {
       background: #880f30 !important;
     }
+
     #qr-reader select {
       padding: 10px 14px;
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       background: var(--bg-primary);
       color: var(--text-primary);
       font-family: var(--font-body);
@@ -78,11 +85,13 @@
       margin: 5px;
       outline: none;
     }
+
     body.dark-theme #qr-reader select {
       background: rgba(15, 23, 42, 0.5);
-      border-color: rgba(255,255,255,0.1);
+      border-color: rgba(255, 255, 255, 0.1);
       color: white;
     }
+
     #qr-reader a {
       color: var(--brand-blue);
       font-weight: 600;
@@ -94,14 +103,17 @@
       background: rgba(30, 64, 175, 0.1);
       transition: var(--transition);
     }
+
     body.dark-theme #qr-reader a {
       color: #93c5fd;
       background: rgba(147, 197, 253, 0.1);
     }
+
     #qr-reader a:hover {
       background: rgba(30, 64, 175, 0.2);
       text-decoration: none;
     }
+
     body.dark-theme #qr-reader a:hover {
       background: rgba(147, 197, 253, 0.2);
     }
@@ -130,12 +142,13 @@
     <div class="nav-links">
       <a href="index.html" class="nav-link">Dashboard</a>
       <a href="checkin.html" class="nav-link active primary">
-        <span class="nav-link-full">Check In / Out</span>
+        <span class="nav-link-full">Check In</span>
         <span class="nav-link-short">Check In</span>
       </a>
 
       <!-- Notification Bell -->
-      <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center; gap: 8px;">
+      <a href="notifications.html" class="nav-link"
+        style="position:relative; display:flex; align-items:center; gap: 8px;">
         <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
         <span class="nav-link-full">Notification</span>
         <span id="nav-bell-badge" class="bell-badge" style="display:none;">0</span>
@@ -194,7 +207,7 @@
             <div
               style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">
               Active User</div>
-            <div id="auth-user-display" style="font-weight: 600; color: var(--text-primary);">Student</div>
+            <div id="auth-user-display" style="font-weight: 600; color: var(--text-primary);">User</div>
           </div>
         </div>
 
@@ -220,7 +233,14 @@
   </div>
 
   <footer class="footer">
-    <div class="motto-text">Knowledge Integrity Impact</div>
+    <div class="motto-text">TALK TO US</div>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/universityofenergy" class="fb" title="Facebook"><i
+          class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://x.com/UENR830GH" class="tw" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="https://www.instagram.com/uenr_official" class="ig" title="Instagram"><i
+          class="fa-brands fa-instagram"></i></a>
+    </div>
     <p>&copy; 2026 UENR LibraTrack. All rights reserved.</p>
   </footer>
 
@@ -242,7 +262,7 @@
 
     const currentUser = getCurrentUser();
     if (currentUser) {
-      document.getElementById('auth-user-display').textContent = `Student: ${currentUser.name || currentUser.id}`;
+      document.getElementById('auth-user-display').textContent = currentUser.name || currentUser.id;
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -257,7 +277,7 @@
 
     function hideAlert() { alert.className = 'alert'; }
 
-    libInput.addEventListener('input', () => {
+    libInput.addEventListener('input', (e) => {
       libInput.value = libInput.value.toUpperCase();
       const code = libInput.value.trim();
       const lib = getLibrary(code);
@@ -267,7 +287,9 @@
         previewName.textContent = lib.name;
         previewSeats.innerHTML = `<span class="status-badge ${statusClass(status)}" style="font-size:11px;padding:4px 10px;display:inline-flex;gap:5px;align-items:center"><span class="dot"></span>${statusLabel(status)}</span>&nbsp;&nbsp; ${occ.available} seat${occ.available !== 1 ? 's' : ''} available of ${occ.capacity}`;
         preview.classList.add('show');
-        hideAlert();
+        if (!(e.detail && e.detail.preserveAlert)) {
+          hideAlert();
+        }
 
         // Update button text based on whether current user is already checked in
         if (currentUser) {
@@ -304,12 +326,16 @@
           (position) => {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
+            const accuracy = position.coords.accuracy || 0;
             const dist = calculateDistanceMeters(userLat, userLng, CAMPUS_LAT, CAMPUS_LNG);
 
             submitBtn.innerHTML = originalBtnText;
             submitBtn.disabled = false;
+            
+            // Allow checking in if the campus is within the radius plus the device's accuracy margin
+            const effectiveRadius = GEOFENCE_RADIUS_METERS + accuracy;
 
-            if (dist > GEOFENCE_RADIUS_METERS) {
+            if (dist > effectiveRadius) {
               const msg = `Check-In Failed: You must be on campus to check in. (You are approx ${Math.round(dist / 1000)}km away).`;
               showAlert('error', '<i class="fa-solid fa-location-dot"></i> Out of Range', msg);
               if ("Notification" in window && Notification.permission === "granted") {
@@ -348,12 +374,10 @@
           submitBtn.style.background = 'var(--status-closed-text)';
         } else {
           localStorage.removeItem('currentLibrary');
-          form.reset();
           submitBtn.textContent = 'Check In';
           submitBtn.style.background = 'var(--brand-blue)';
-          preview.classList.remove('show');
         }
-        libInput.dispatchEvent(new Event('input'));
+        libInput.dispatchEvent(new CustomEvent('input', { detail: { preserveAlert: true } }));
       } else {
         showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
       }
@@ -372,13 +396,13 @@
       document.getElementById('start-scanner-btn').style.display = 'none';
 
       html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader", { 
-          fps: 10, 
-          qrbox: { width: 250, height: 250 },
-          videoConstraints: {
-            facingMode: "environment"
-          }
-        }, false);
+        "qr-reader", {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        videoConstraints: {
+          facingMode: "environment"
+        }
+      }, false);
 
       html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     });

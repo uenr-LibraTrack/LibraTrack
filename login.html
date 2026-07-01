@@ -39,9 +39,12 @@
     }
 
     @keyframes floatLogo {
-      0%, 100% {
+
+      0%,
+      100% {
         transform: translateY(0);
       }
+
       50% {
         transform: translateY(-8px);
         filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
@@ -69,13 +72,16 @@
       border: 1px solid transparent;
       animation: fadeIn 0.3s ease;
     }
+
     .alert.show {
       display: block;
     }
+
     .alert-title {
       font-weight: 700;
       margin-bottom: 4px;
     }
+
     .alert-error {
       background: rgba(220, 38, 38, 0.15);
       border-color: rgba(220, 38, 38, 0.3);
@@ -116,9 +122,10 @@
         </div>
 
         <button type="submit" class="btn-submit" id="login-btn">Sign In</button>
-        
+
         <div id="signup-link-container" style="text-align: center; margin-top: 15px; display: none;">
-          <p style="color: var(--text-secondary); font-size: 14px;">Don't have an account? <a href="signup.html" style="color: var(--brand-blue); text-decoration: none; font-weight: 600;">Sign Up</a></p>
+          <p style="color: var(--text-secondary); font-size: 14px;">Don't have an account? <a href="signup.html"
+              style="color: var(--brand-blue); text-decoration: none; font-weight: 600;">Sign Up</a></p>
         </div>
       </form>
 
@@ -147,10 +154,10 @@
     if (roleParam === 'admin') {
       document.getElementById('login-title').textContent = 'Admin Sign In';
       document.getElementById('login-desc').textContent = 'Sign in with your Library Email and 4-digit code';
-      document.getElementById('label-id').textContent = 'LIBRARY EMAIL';
-      idInput.placeholder = 'LIBRARY EMAIL';
-      document.getElementById('label-password').textContent = '4-DIGIT CODE';
-      passInput.placeholder = 'Enter 4-digit code';
+      document.getElementById('label-id').textContent = 'EMAIL';
+      idInput.placeholder = 'EMAIL';
+      document.getElementById('label-password').textContent = 'Password';
+      passInput.placeholder = 'Enter Password';
       passInput.maxLength = 4;
       passInput.inputMode = 'numeric';
     } else {
@@ -158,7 +165,7 @@
       document.getElementById('login-desc').textContent = 'Sign in with your Student Email and Password';
       document.getElementById('label-id').textContent = 'STUDENT EMAIL';
       idInput.placeholder = 'e.g. index@st.uenr.edu.gh';
-      document.getElementById('label-password').textContent = 'PASSWORD / PIN';
+      document.getElementById('label-password').textContent = 'PASSWORD';
       passInput.placeholder = 'Enter your password';
       passInput.removeAttribute('maxlength');
       passInput.removeAttribute('inputmode');

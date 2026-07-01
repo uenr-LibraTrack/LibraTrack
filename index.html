@@ -60,14 +60,31 @@
   <!-- SPLASH SCREEN -->
   <style>
     @keyframes splashLogoPulse {
-      0% { transform: scale(1); opacity: 0.8; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-      50% { transform: scale(1.1); opacity: 1; box-shadow: 0 16px 40px rgba(30, 64, 175, 0.4); }
-      100% { transform: scale(1); opacity: 0.8; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+        box-shadow: 0 16px 40px rgba(30, 64, 175, 0.4);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 0.8;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
     }
+
     #pwa-splash-screen {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       background: var(--bg-body, #f8fafc);
       z-index: 100000;
       display: flex;
@@ -76,9 +93,11 @@
       justify-content: center;
       transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
     }
+
     .dark-theme #pwa-splash-screen {
       background: #0f172a;
     }
+
     #pwa-splash-screen img {
       width: 100px;
       height: 100px;
@@ -87,6 +106,7 @@
       padding: 8px;
       animation: splashLogoPulse 1.5s ease-in-out infinite;
     }
+
     #pwa-splash-screen h2 {
       margin-top: 24px;
       font-size: 26px;
@@ -153,14 +173,15 @@
     <div class="nav-links">
       <a href="index.html" class="nav-link active">Dashboard</a>
       <a href="checkin.html" class="nav-link primary">
-        <span class="nav-link-full">Check In / Out</span>
+        <span class="nav-link-full">Check In</span>
         <span class="nav-link-short">Check In</span>
       </a>
 
 
 
       <!-- Notification Bell -->
-      <a href="notifications.html" class="nav-link" style="position:relative; display:flex; align-items:center; gap: 8px;">
+      <a href="notifications.html" class="nav-link"
+        style="position:relative; display:flex; align-items:center; gap: 8px;">
         <i class="fa-solid fa-bell" style="font-size: 18px;"></i>
         <span class="nav-link-full">Notification</span>
         <span id="nav-bell-badge" class="bell-badge" style="display:none;">0</span>
@@ -243,7 +264,8 @@
   </div>
 
   <!-- LIB CORNER -->
-  <div class="card fade-in" style="margin-bottom: 40px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+  <div class="card fade-in"
+    style="margin-bottom: 40px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
       <h3 style="margin:0; color:var(--brand-blue);"><i class="fa-solid fa-bullhorn"></i> Lib Corner</h3>
       <span style="font-size:12px; color:var(--text-secondary);">Latest Updates</span>
@@ -270,32 +292,38 @@
           style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i
             class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
       </div>
-      <div style="color: var(--text-secondary); line-height: 1.8; font-size: 15px; max-height: 60vh; overflow-y: auto; padding-right: 8px;">
-        <h4 style="color: var(--text-primary); margin-top: 0; margin-bottom: 12px; font-size: 16px;">1.14 GENERAL RULES AND REGULATIONS OF THE LIBRARY</h4>
+      <div
+        style="color: var(--text-secondary); line-height: 1.8; font-size: 15px; max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+        <h4 style="color: var(--text-primary); margin-top: 0; margin-bottom: 12px; font-size: 16px;">1.14 GENERAL RULES
+          AND REGULATIONS OF THE LIBRARY</h4>
         <ul style="padding-left: 20px; margin-bottom: 24px;">
           <li style="margin-bottom: 8px;">No borrowing is allowed for regular students during inter-semester break</li>
-          <li style="margin-bottom: 8px;">All borrowed items are to be returned to the library three days before the end of every semester</li>
-          <li style="margin-bottom: 8px;">Failure to return all library books may result in withholding the examination results of the user</li>
+          <li style="margin-bottom: 8px;">All borrowed items are to be returned to the library three days before the end
+            of every semester</li>
+          <li style="margin-bottom: 8px;">Failure to return all library books may result in withholding the examination
+            results of the user</li>
           <li style="margin-bottom: 8px;">Orderly conduct must be maintained at all times in the library</li>
           <li style="margin-bottom: 8px;">Library staff will inspect any item being taken out of the library</li>
         </ul>
-        
+
         <h4 style="color: var(--text-primary); margin-bottom: 12px; font-size: 16px;">1.15 USER CONDUCT</h4>
-        <p style="margin-bottom: 16px;">The University Library promises to maintain an atmosphere that is conducive enough to support learning and research activities. For this reason, our patrons are also expected to conform to certain standards of the library to ensure its effective use.</p>
-        <p style="margin-bottom: 12px; font-weight: 600; color: var(--text-primary);">The following conducts are not permitted at any of our libraries:</p>
+        <p style="margin-bottom: 16px;">The University Library promises to maintain an atmosphere that is conducive
+          enough to support learning and research activities. For this reason, our patrons are also expected to conform
+          to certain standards of the library to ensure its effective use.</p>
+        <p style="margin-bottom: 12px; font-weight: 600; color: var(--text-primary);">The following conducts are not
+          permitted at any of our libraries:</p>
         <ul style="padding-left: 20px; margin-bottom: 12px;">
-          <li style="margin-bottom: 8px;">Noise-making within and around the library is prohibited. Users are to observe silence always</li>
+          <li style="margin-bottom: 8px;">Noise-making within and around the library is prohibited. Users are to observe
+            silence always</li>
           <li style="margin-bottom: 8px;">No food or drink is allowed in the library</li>
-          <li style="margin-bottom: 8px;">Books consulted should not be returned to shelves. They should be left on the tables</li>
-          <li style="margin-bottom: 8px;">Firearms and other offensive weapons are not allowed in the library</li>
-          <li style="margin-bottom: 8px;">The use of mobile phones/radios in the library is prohibited</li>
-          <li style="margin-bottom: 8px;">Smoking is prohibited in the library</li>
+          <li style="margin-bottom: 8px;">Books consulted should not be returned to shelves. They should be left on the
+            tables</li>
           <li style="margin-bottom: 8px;">No seat should be reserved for any user</li>
           <li style="margin-bottom: 8px;">Exhibition of obscene materials in the library is prohibited</li>
-          <li style="margin-bottom: 8px;">Any book recalled shall be returned within 72 hours or a fine will be imposed after three days</li>
+          <li style="margin-bottom: 8px;">Any book recalled shall be returned within 72 hours or a fine will be imposed
+            after three days</li>
           <li style="margin-bottom: 8px;">Readers may not enter staff offices except an invitation has been given</li>
           <li style="margin-bottom: 8px;">Indecent dressing in the library is not allowed</li>
-          <li style="margin-bottom: 8px;">Any other behavior that interferes with the right of others to enjoy and use the library.</li>
         </ul>
       </div>
     </div>
@@ -303,18 +331,25 @@
 
   <!-- HEATMAP MODAL -->
   <div class="modal-overlay" id="heatmap-modal" onclick="if(event.target===this)closeHeatmapModal()">
-    <div class="modal-box guide-modal-box" style="max-width: 600px; text-align: center; overflow: hidden; display: flex; flex-direction: column;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; flex-shrink: 0;">
+    <div class="modal-box guide-modal-box"
+      style="max-width: 600px; text-align: center; overflow: hidden; display: flex; flex-direction: column;">
+      <div
+        style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; flex-shrink: 0;">
         <h3 id="heatmap-title" style="margin: 0;"><i class="fa-solid fa-map"></i> Seat Heatmap</h3>
         <button onclick="closeHeatmapModal()"
           style="width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);"><i
             class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
       </div>
       <div style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary); flex-shrink: 0;">
-        <span style="display:inline-block; width:12px; height:12px; background:var(--brand-green); margin-right:4px; border-radius: 2px;"></span> Occupied
-        <span style="display:inline-block; width:12px; height:12px; background:var(--status-full-text); margin-right:4px; margin-left: 12px; border-radius: 2px;"></span> Vacant
+        <span
+          style="display:inline-block; width:12px; height:12px; background:var(--brand-green); margin-right:4px; border-radius: 2px;"></span>
+        Occupied
+        <span
+          style="display:inline-block; width:12px; height:12px; background:var(--status-full-text); margin-right:4px; margin-left: 12px; border-radius: 2px;"></span>
+        Vacant
       </div>
-      <div id="heatmap-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; max-height: 50vh; overflow-y: auto; padding: 4px; padding-right: 12px; flex-grow: 1;">
+      <div id="heatmap-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; max-height: 50vh; overflow-y: auto; padding: 4px; padding-right: 12px; flex-grow: 1;">
         <!-- Squares injected here -->
       </div>
     </div>
@@ -324,7 +359,14 @@
     <div class="refresh-info">
       ⟳ Last updated: <span id="last-updated">—</span> &nbsp;·&nbsp; Auto-refreshes every 30s
     </div>
-    <div class="motto-text">Knowledge Integrity Impact</div>
+    <div class="motto-text">TALK TO US</div>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/UENRLibrary/" class="fb" title="Facebook"><i
+          class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://x.com/UENR830GH" class="tw" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="https://www.instagram.com/uenr_official" class="ig" title="Instagram"><i
+          class="fa-brands fa-instagram"></i></a>
+    </div>
     <p>&copy; 2026 UENR LibraTrack. All rights reserved.</p>
   </footer>
 
@@ -379,8 +421,8 @@
 
           <div class="occupancy-section">
             <div class="seat-numbers">
-              <div class="seat-big" id="pct-${lib.id}">${pct}%</div>
-              <div class="seat-label">Occupancy</div>
+              <div class="seat-big" id="pct-${lib.id}">${occ.taken}</div>
+              <div class="seat-label">Students Checked In</div>
             </div>
             <div class="progress-bar">
               <div class="progress-fill ${progressCls}" id="bar-${lib.id}" style="width:${pct}%"></div>
@@ -393,7 +435,7 @@
           <a href="checkin.html?lib=${lib.id}" class="checkin-btn" id="btn-${lib.id}" style="pointer-events: ${pointerEvents}; ${btnStyle}">
             ${btnText}
           </a>
-          <button class="glowing-btn" style="width:100%; margin-top: 10px; background: var(--brand-blue); border: none; color: white;" onclick="openHeatmapModal('${lib.id}')"><i class="fa-solid fa-map"></i> View Seat Heatmap</button>
+          <button class="glowing-btn" style="width:100%; margin-top: 10px; background: #EBE72D; border: none; color: brown; font-weight: 700;" onclick="openHeatmapModal('${lib.id}')"><i class="fa-solid fa-map"></i> View Seat Heatmap</button>
         </div>`;
     }
 
@@ -418,7 +460,7 @@
         totalStudents += occ.taken;
 
         const pctEl = document.getElementById(`pct-${lib.id}`);
-        if (pctEl && pctEl.textContent !== `${pct}%`) pctEl.textContent = `${pct}%`;
+        if (pctEl && pctEl.textContent !== `${occ.taken}`) pctEl.textContent = `${occ.taken}`;
 
         const barEl = document.getElementById(`bar-${lib.id}`);
         if (barEl) {
@@ -498,17 +540,17 @@
       const lib = getLibrary(libId);
       if (!lib) return;
       document.getElementById('heatmap-title').innerHTML = `<i class="fa-solid fa-map"></i> ${lib.name} Heatmap`;
-      
+
       const grid = document.getElementById('heatmap-grid');
       grid.innerHTML = '';
-      
+
       const occupiedSeats = lib.occupants.map(o => o.seatNumber);
-      
+
       for (let i = 1; i <= lib.capacity; i++) {
         const isOccupied = occupiedSeats.includes(i);
         const color = isOccupied ? 'var(--brand-green)' : 'var(--status-full-text)';
         const opacity = isOccupied ? '1' : '0.6';
-        
+
         const square = document.createElement('div');
         square.style.cssText = `
           aspect-ratio: 1;
@@ -533,7 +575,7 @@
         }
         grid.appendChild(square);
       }
-      
+
       document.getElementById('heatmap-modal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }

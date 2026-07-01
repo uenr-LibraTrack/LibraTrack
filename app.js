@@ -22,7 +22,7 @@ const ICONS = ['<i class="fa-solid fa-book"></i>', '<i class="fa-solid fa-buildi
 const CAMPUS_LAT = 7.34949;
 const CAMPUS_LNG = -2.343501;
 // Radius in meters (e.g., 1500 meters = 1.5km to cover campus but restrict outside)
-const GEOFENCE_RADIUS_METERS = 1500;
+const GEOFENCE_RADIUS_METERS = 3000;
 
 /**
  * Calculates the distance between two coordinates in meters using the Haversine formula
@@ -137,6 +137,7 @@ function initRealtime() {
           if (libInput && libInput.value.toUpperCase() === updatedLib.id) {
             libInput.dispatchEvent(new Event('input'));
           }
+          if (typeof updateNavCheckinButton === 'function') updateNavCheckinButton();
         }
       }
     })
@@ -216,6 +217,29 @@ function updateNavAuth() {
     // User is NOT logged in.
     // We no longer inject a modal here because requireAuth() handles redirecting to entry.html
   }
+}
+
+function updateNavCheckinButton() {
+  const checkinLinks = document.querySelectorAll('.nav-link.primary');
+  if (!checkinLinks.length) return;
+  
+  const user = getCurrentUser();
+  let isCheckedIn = false;
+  
+  if (user && globalState) {
+    isCheckedIn = globalState.libraries.some(l => l.occupants && l.occupants.some(o => o.id.toLowerCase() === user.id.toLowerCase()));
+  }
+  
+  const text = isCheckedIn ? 'Check Out' : 'Check In';
+  
+  checkinLinks.forEach(link => {
+    if (link.href && link.href.includes('checkin.html')) {
+      const fullSpan = link.querySelector('.nav-link-full');
+      const shortSpan = link.querySelector('.nav-link-short');
+      if (fullSpan) fullSpan.textContent = text;
+      if (shortSpan) shortSpan.textContent = text;
+    }
+  });
 }
 
 // ============================================================
@@ -446,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadStateFromServer().then(() => {
     if (typeof renderAdminCards === 'function') renderAdminCards();
     if (typeof renderAll === 'function') renderAll();
+    if (typeof updateNavCheckinButton === 'function') updateNavCheckinButton();
   });
   
   if (typeof renderLibCorner === 'function') renderLibCorner();
