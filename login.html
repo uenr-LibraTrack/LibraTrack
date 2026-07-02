@@ -153,13 +153,13 @@
 
     if (roleParam === 'admin') {
       document.getElementById('login-title').textContent = 'Admin Sign In';
-      document.getElementById('login-desc').textContent = 'Sign in with your Library Email and 4-digit code';
+      document.getElementById('login-desc').textContent = 'Sign in with your Email and Password';
       document.getElementById('label-id').textContent = 'EMAIL';
-      idInput.placeholder = 'EMAIL';
+      idInput.placeholder = 'Enter your email';
       document.getElementById('label-password').textContent = 'Password';
       passInput.placeholder = 'Enter Password';
-      passInput.maxLength = 4;
-      passInput.inputMode = 'numeric';
+      passInput.removeAttribute('maxlength');
+      passInput.removeAttribute('inputmode');
     } else {
       document.getElementById('login-title').textContent = 'Student Sign In';
       document.getElementById('login-desc').textContent = 'Sign in with your Student Email and Password';
