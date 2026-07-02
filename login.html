@@ -164,7 +164,7 @@
       document.getElementById('login-title').textContent = 'Student Sign In';
       document.getElementById('login-desc').textContent = 'Sign in with your Student Email and Password';
       document.getElementById('label-id').textContent = 'STUDENT EMAIL';
-      idInput.placeholder = 'e.g. index@st.uenr.edu.gh';
+      idInput.placeholder = 'e.g. johnterry@gmail.com';
       document.getElementById('label-password').textContent = 'PASSWORD';
       passInput.placeholder = 'Enter your password';
       passInput.removeAttribute('maxlength');
@@ -198,7 +198,7 @@
       if (role === 'admin') {
         // Use hardcoded admin login
         if ((userId.toLowerCase() !== 'admin' && !userId.toLowerCase().includes('library@')) || password !== '2011') {
-          showAlert('error', 'Authentication Failed', 'Incorrect email or 4-digit code. Please try again.');
+          showAlert('error', 'Authentication Failed', 'Incorrect email or password. Please try again.');
           return;
         }
         name = 'Administrator';

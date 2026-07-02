@@ -171,17 +171,14 @@ function logoutUser() {
 function requireAuth() {
   const user = getCurrentUser();
   const path = window.location.pathname;
-  const isPublicPage = path.endsWith('entry.html') || path.endsWith('index.html') || path.endsWith('login.html') || path.endsWith('signup.html') || path === '/' || path.includes('index.html');
   
-  // If no user and not on public page, redirect to entry modal
+  // Define truly public pages that don't require login
+  const isPublicPage = path.endsWith('entry.html') || path.endsWith('login.html') || path.endsWith('signup.html');
+  
+  // If no user and not on a public page, redirect to entry page immediately
   if (!user && !isPublicPage) {
-    window.location.href = 'entry.html';
-  }
-  
-  // If user is on index.html but NOT logged in, redirect them to entry.html
-  // This ensures the dashboard is never seen without logging in.
-  if (!user && (path.endsWith('index.html') || path === '/')) {
-    window.location.href = 'entry.html';
+    window.location.replace('entry.html');
+    return null;
   }
 
   return user;
