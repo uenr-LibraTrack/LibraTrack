@@ -67,6 +67,11 @@ function initNotifsRealtime() {
         if (typeof renderNotificationFeed === 'function' && document.getElementById('notif-feed')) renderNotificationFeed();
         if (typeof renderLibCorner === 'function') renderLibCorner();
         
+        // Show in-app notification toast for all users
+        if (typeof showNotificationToast === 'function') {
+          showNotificationToast(newNotif.title, newNotif.message, newNotif.type);
+        }
+        
         // Spawn local browser notification if permitted
         if ("Notification" in window && Notification.permission === "granted") {
           // If the app is currently in the background or minimized, this will alert the user.
@@ -221,4 +226,73 @@ const NOTIF_CONFIG = {
 
 function getNotifConfig(type) {
   return NOTIF_CONFIG[type] || NOTIF_CONFIG.announcement;
+}
+
+function showNotificationToast(title, message, type) {
+  let toastContainer = document.getElementById('notif-toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'notif-toast-container';
+    toastContainer.style.cssText = `
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    `;
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement('div');
+  const config = getNotifConfig(type);
+  
+  toast.style.cssText = `
+    background: var(--bg-card, #fff);
+    border-left: 4px solid var(--brand-blue, #2563eb);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    padding: 16px;
+    border-radius: 8px;
+    width: 320px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transform: translateX(120%);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+  `;
+
+  if (type === 'emergency') toast.style.borderLeftColor = '#ef4444';
+  else if (type === 'closure') toast.style.borderLeftColor = 'var(--brand-burgundy, #800020)';
+  else if (type === 'availability') toast.style.borderLeftColor = 'var(--brand-green, #10b981)';
+
+  toast.innerHTML = `
+    <div style="font-size: 20px; color: ${toast.style.borderLeftColor}; flex-shrink: 0; margin-top: 2px;">
+      ${config.icon}
+    </div>
+    <div style="flex: 1; overflow: hidden;">
+      <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--text-primary, #1e293b);">${title}</div>
+      <div style="font-size: 13px; color: var(--text-secondary, #64748b); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${message}</div>
+    </div>
+  `;
+
+  toast.onclick = () => {
+    window.location.href = 'notifications.html';
+  };
+
+  toastContainer.appendChild(toast);
+
+  // Animate in
+  setTimeout(() => {
+    toast.style.transform = 'translateX(0)';
+  }, 50);
+
+  // Animate out and remove
+  setTimeout(() => {
+    toast.style.transform = 'translateX(120%)';
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 300);
+  }, 5000);
 }
