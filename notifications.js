@@ -266,13 +266,22 @@ function showNotificationToast(title, message, type) {
     <div style="font-size: 22px; color: #ffffff; flex-shrink: 0; margin-top: 2px;">
       ${config.icon}
     </div>
-    <div style="flex: 1; overflow: hidden;">
+    <div style="flex: 1; overflow: hidden; padding-right: 20px;">
       <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #ffffff;">${title}</div>
       <div style="font-size: 13.5px; color: rgba(255, 255, 255, 0.9); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${message}</div>
     </div>
+    <button class="toast-close-btn" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: rgba(255, 255, 255, 0.7); cursor: pointer; font-size: 16px; padding: 4px;"><i class="fa-solid fa-xmark"></i></button>
   `;
 
-  toast.onclick = () => {
+  toast.onclick = (e) => {
+    if (e.target.closest('.toast-close-btn')) {
+      e.stopPropagation();
+      toast.style.transform = 'translateX(120%)';
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+      return;
+    }
     window.location.href = 'notifications.html';
   };
 
@@ -283,11 +292,5 @@ function showNotificationToast(title, message, type) {
     toast.style.transform = 'translateX(0)';
   }, 50);
 
-  // Animate out and remove
-  setTimeout(() => {
-    toast.style.transform = 'translateX(120%)';
-    setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 300);
-  }, 5000);
+  // Toast stays until closed by user
 }

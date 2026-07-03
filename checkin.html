@@ -226,7 +226,8 @@
         <button type="submit" class="btn-submit" id="submit-btn" style="display: none;">Check In</button>
       </form>
 
-      <div class="alert" id="result-alert">
+      <div class="alert" id="result-alert" style="position: relative; padding-right: 40px;">
+        <button type="button" onclick="hideAlert()" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; color: inherit; font-size: 18px;"><i class="fa-solid fa-xmark"></i></button>
         <div class="alert-title" id="result-title"></div>
         <div id="result-msg"></div>
       </div>
@@ -391,10 +392,7 @@
         }
         libInput.dispatchEvent(new CustomEvent('input', { detail: { preserveAlert: true } }));
         
-        // Hide the message automatically after 1 minute
-        redirectTimer = setTimeout(() => {
-          hideAlert();
-        }, 60000);
+        // The message will stay until the user manually closes it
       } else {
         showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
       }
