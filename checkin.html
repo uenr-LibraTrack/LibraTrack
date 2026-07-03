@@ -380,10 +380,10 @@
         
         let extraMsg = '';
         if (result.action === 'checkin' && currentUser && currentUser.role !== 'admin') {
-          extraMsg = '<br><br><span style="font-size: 12px; color: var(--text-secondary); opacity: 0.8;">You will be redirected to the dashboard in 40 seconds...</span>';
+          extraMsg = '<br><br><span style="font-size: 12px; color: var(--text-secondary); opacity: 0.8;">You will be redirected to the dashboard in 50 seconds...</span>';
           redirectTimer = setTimeout(() => {
             window.location.href = 'index.html';
-          }, 40000);
+          }, 50000);
         }
         
         showAlert('success', `${icon} ${result.action === 'checkin' ? 'Checked In' : 'Checked Out'}`, result.message + extraMsg);
