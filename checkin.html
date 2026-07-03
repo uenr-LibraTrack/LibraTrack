@@ -227,7 +227,9 @@
       </form>
 
       <div class="alert" id="result-alert" style="position: relative; padding-right: 40px;">
-        <button type="button" onclick="hideAlert()" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; color: inherit; font-size: 18px;"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" onclick="hideAlert()"
+          style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; color: inherit; font-size: 18px;"><i
+            class="fa-solid fa-xmark"></i></button>
         <div class="alert-title" id="result-title"></div>
         <div id="result-msg"></div>
       </div>
@@ -283,8 +285,8 @@
       sessionStorage.setItem('checkinAlert', JSON.stringify({ type, title, msg }));
     }
 
-    function hideAlert() { 
-      alert.className = 'alert'; 
+    function hideAlert() {
+      alert.className = 'alert';
       sessionStorage.removeItem('checkinAlert');
     }
 
@@ -342,7 +344,7 @@
 
             submitBtn.innerHTML = originalBtnText;
             submitBtn.disabled = false;
-            
+
             // Allow checking in if the campus is within the radius plus the device's accuracy margin
             const effectiveRadius = GEOFENCE_RADIUS_METERS + accuracy;
 
@@ -380,11 +382,11 @@
 
       if (result.success) {
         const icon = result.action === 'checkin' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-right-from-bracket"></i>';
-        
+
         if (redirectTimer) clearTimeout(redirectTimer);
-        
+
         showAlert('success', `${icon} ${result.action === 'checkin' ? 'Checked In' : 'Checked Out'}`, result.message);
-        
+
         if (result.action === 'checkin') {
           localStorage.setItem('currentLibrary', result.library.id);
           submitBtn.textContent = 'Check Out';
@@ -395,7 +397,7 @@
           submitBtn.style.background = 'var(--brand-blue)';
         }
         libInput.dispatchEvent(new CustomEvent('input', { detail: { preserveAlert: true } }));
-        
+
         // The message will stay until the user manually closes it
       } else {
         showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
