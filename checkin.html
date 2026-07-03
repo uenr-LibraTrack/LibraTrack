@@ -404,7 +404,7 @@
       }
     }
 
-    if (presetLib) libInput.dispatchEvent(new Event('input'));
+    if (presetLib) libInput.dispatchEvent(new CustomEvent('input', { detail: { preserveAlert: true } }));
 
     // ============================================================
     // QR Code Scanner Integration
