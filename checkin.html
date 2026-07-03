@@ -391,10 +391,10 @@
         }
         libInput.dispatchEvent(new CustomEvent('input', { detail: { preserveAlert: true } }));
         
-        // Hide the message automatically after 9 seconds
+        // Hide the message automatically after 1 minute
         redirectTimer = setTimeout(() => {
           hideAlert();
-        }, 9000);
+        }, 60000);
       } else {
         showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
       }
