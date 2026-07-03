@@ -249,11 +249,10 @@ function showNotificationToast(title, message, type) {
   const config = getNotifConfig(type);
   
   toast.style.cssText = `
-    background: var(--bg-card, #fff);
-    border-left: 4px solid var(--brand-blue, #2563eb);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 12px;
     width: 320px;
     display: flex;
     gap: 12px;
@@ -263,17 +262,13 @@ function showNotificationToast(title, message, type) {
     cursor: pointer;
   `;
 
-  if (type === 'emergency') toast.style.borderLeftColor = '#ef4444';
-  else if (type === 'closure') toast.style.borderLeftColor = 'var(--brand-burgundy, #800020)';
-  else if (type === 'availability') toast.style.borderLeftColor = 'var(--brand-green, #10b981)';
-
   toast.innerHTML = `
-    <div style="font-size: 20px; color: ${toast.style.borderLeftColor}; flex-shrink: 0; margin-top: 2px;">
+    <div style="font-size: 22px; color: #ffffff; flex-shrink: 0; margin-top: 2px;">
       ${config.icon}
     </div>
     <div style="flex: 1; overflow: hidden;">
-      <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--text-primary, #1e293b);">${title}</div>
-      <div style="font-size: 13px; color: var(--text-secondary, #64748b); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${message}</div>
+      <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #ffffff;">${title}</div>
+      <div style="font-size: 13.5px; color: rgba(255, 255, 255, 0.9); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${message}</div>
     </div>
   `;
 
