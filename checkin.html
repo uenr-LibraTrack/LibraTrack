@@ -280,9 +280,13 @@
       alert.className = `alert show alert-${type}`;
       alertTitle.innerHTML = title;
       alertMsg.innerHTML = msg;
+      sessionStorage.setItem('checkinAlert', JSON.stringify({ type, title, msg }));
     }
 
-    function hideAlert() { alert.className = 'alert'; }
+    function hideAlert() { 
+      alert.className = 'alert'; 
+      sessionStorage.removeItem('checkinAlert');
+    }
 
     libInput.addEventListener('input', (e) => {
       libInput.value = libInput.value.toUpperCase();
@@ -447,6 +451,17 @@
 
     function onScanFailure(error) {
       // handle scan failure, usually better to ignore and keep scanning
+    }
+
+    // Restore persisted alert on page reload
+    const savedAlert = sessionStorage.getItem('checkinAlert');
+    if (savedAlert) {
+      try {
+        const data = JSON.parse(savedAlert);
+        showAlert(data.type, data.title, data.msg);
+      } catch (e) {
+        sessionStorage.removeItem('checkinAlert');
+      }
     }
   </script>
 </body>
