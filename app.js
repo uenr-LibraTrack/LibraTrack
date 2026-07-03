@@ -132,10 +132,10 @@ function initRealtime() {
           if (typeof renderAdminCards === 'function') renderAdminCards();
           if (typeof renderAll === 'function') renderAll();
           
-          // If we're on the check-in page viewing this library, update the preview
+          // If we're on the check-in page viewing this library, update the preview without hiding alerts
           const libInput = document.getElementById('lib-code');
           if (libInput && libInput.value.toUpperCase() === updatedLib.id) {
-            libInput.dispatchEvent(new Event('input'));
+            libInput.dispatchEvent(new CustomEvent('input', { detail: { preserveAlert: true } }));
           }
           if (typeof updateNavCheckinButton === 'function') updateNavCheckinButton();
         }
