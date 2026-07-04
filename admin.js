@@ -93,11 +93,14 @@ function renderAdminCards() {
         
         <div class="occupancy-section" style="margin: 20px 0;">
           <div class="seat-numbers">
-            <div class="seat-big">${pct}%</div>
-            <div class="seat-label" style="font-size: 12px;">Full</div>
+            <div class="seat-big">${occ.taken}</div>
+            <div class="seat-label" style="font-size: 12px;">Students Checked In</div>
           </div>
           <div class="progress-bar">
             <div class="progress-fill" style="width:${pct}%;"></div>
+          </div>
+          <div style="font-size:13px; color:var(--text-secondary); font-weight:600; margin-top:8px;">
+             ${occ.taken} / ${occ.capacity} seats taken
           </div>
         </div>
 
