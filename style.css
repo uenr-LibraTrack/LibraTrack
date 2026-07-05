@@ -2043,6 +2043,201 @@ body:not(.dark-theme) .secondary-glass {
   background: rgba(255, 255, 255, 0.25);
   transform: translateY(-2px);
 }
+  .seat-big { font-size: 44px; }
+
+  /* ── Settings / Notification sections ───── */
+  .settings-section { padding: 0 16px 36px; }
+  .settings-card { padding: 20px 16px; }
+  .pin-grid { grid-template-columns: 1fr; gap: 0; }
+
+  /* ── Check-In panel ───────────────────── */
+  .checkin-wrapper { padding: 24px 16px; }
+  .checkin-panel { padding: 28px 20px; }
+  .checkin-panel h2 { font-size: 22px; }
+
+  /* ── Notifications page ────────────────── */
+  .notif-card { padding: 16px 14px; flex-direction: column; gap: 10px; }
+  .notif-icon-lg { width: 36px; height: 36px; font-size: 20px; }
+  .notif-title { font-size: 15px; }
+  .notif-message { font-size: 13px; }
+  .notif-filters { gap: 8px; }
+  .filter-tab { padding: 6px 12px; font-size: 12px; }
+
+  /* ── Footer ────────────────────────────── */
+  .footer { padding: 28px 20px; }
+  .motto-text { font-size: 16px; }
+
+  /* ── Admin action buttons ───────────────── */
+  .capacity-row { padding: 6px 8px; }
+  .capacity-input { font-size: 18px; }
+  .occupant-item { flex-wrap: wrap; gap: 6px; }
+
+  /* ── Notification history table ──────────── */
+  .howto-table { font-size: 12px; }
+  .howto-table th, .howto-table td { padding: 8px 6px; }
+}
+
+/* ─── Small phones ──────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Hero even smaller */
+  .page-hero { padding: 28px 16px 44px; min-height: 140px; }
+  .hero-content h1, .page-hero h1 { font-size: 21px; }
+  .hero-content p,  .page-hero p  { font-size: 13px; }
+
+  /* Stats: stack vertically on very small screens */
+  .stats-bar {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .stat-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
+  .stat-value { font-size: 28px; }
+
+  /* Cards */
+  .card { padding: 18px 14px; border-radius: var(--radius-md); }
+  .library-name { font-size: 17px; }
+  .seat-big { font-size: 38px; }
+
+  /* Checkin panel */
+  .checkin-panel h2 { font-size: 20px; }
+  .form-input { padding: 12px 14px; font-size: 14px; }
+  .btn-submit { padding: 14px; font-size: 15px; }
+
+  /* Nav brand */
+  .nav-brand .nav-title { font-size: 15px; }
+  .nav-logo { height: 28px; }
+  .navbar { height: 64px; }
+  .nav-links { top: 64px; height: calc(100vh - 64px); }
+
+  /* Dots on hero */
+  .hero-dot { width: 6px; height: 6px; }
+  .hero-dot.active { width: 16px; }
+
+  /* Pin grid on admin */
+  .pin-grid { grid-template-columns: 1fr; }
+
+  /* Notification card */
+  .notif-title { font-size: 14px; }
+}
+
+/* ─── Tablet (769–1024px) ───────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .libraries-grid, .admin-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 24px 48px;
+    gap: 20px;
+  }
+  .stats-bar {
+    padding: 0 24px 32px;
+    gap: 16px;
+  }
+  .page-hero { margin: 20px 24px 28px; padding: 44px 32px; }
+  .hero-content h1, .page-hero h1 { font-size: 32px; }
+  .settings-section { padding: 0 24px 40px; }
+}
+}
+
+/* ============================================================
+   GLASSMORPHISM AUTH MODAL
+   ============================================================ */
+.glass-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glass-modal {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  color: white;
+  max-width: 400px;
+  width: 90%;
+  animation: slideUp 0.4s ease-out;
+}
+
+body.dark-theme .glass-modal {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body:not(.dark-theme) .glass-modal {
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text-primary);
+}
+
+.glass-modal h2 {
+  margin-top: 0;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.glass-modal p {
+  color: inherit;
+  opacity: 0.8;
+  margin-bottom: 30px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn-glass {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.primary-glass {
+  background: rgba(37, 99, 235, 0.8);
+  border: 1px solid rgba(37, 99, 235, 0.5);
+  color: white;
+}
+
+.primary-glass:hover {
+  background: rgba(37, 99, 235, 1);
+  transform: translateY(-2px);
+  color: white;
+}
+
+.secondary-glass {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: inherit;
+}
+
+body:not(.dark-theme) .secondary-glass {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.secondary-glass:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
 
 body:not(.dark-theme) .secondary-glass:hover {
   background: rgba(0, 0, 0, 0.1);
@@ -2051,4 +2246,117 @@ body:not(.dark-theme) .secondary-glass:hover {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   OFFLINE SCREEN UI
+   ============================================================ */
+#global-offline-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-secondary);
+  backdrop-filter: var(--glass-blur-nav);
+  -webkit-backdrop-filter: var(--glass-blur-nav);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#global-offline-screen.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.offline-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-xl);
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#global-offline-screen.active .offline-content {
+  transform: translateY(0) scale(1);
+}
+
+.offline-icon-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: rgba(159, 18, 57, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-burgundy);
+  font-size: 32px;
+}
+
+body.dark-theme .offline-icon-container {
+  background: rgba(253, 164, 175, 0.15);
+  color: #fda4af;
+}
+
+.offline-slash {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background: currentColor;
+  transform: rotate(45deg) scaleY(0);
+  border-radius: 2px;
+  transform-origin: center;
+}
+
+#global-offline-screen.active .offline-slash {
+  animation: drawSlash 0.5s ease forwards 0.3s;
+}
+
+@keyframes drawSlash {
+  to { transform: rotate(45deg) scaleY(0.7); }
+}
+
+.offline-content h2 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+.offline-content p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.offline-btn {
+  background: var(--brand-blue);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-button);
+}
+
+.offline-btn:hover {
+  background: var(--brand-blue-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.25);
 }

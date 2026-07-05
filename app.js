@@ -641,3 +641,38 @@ function installPWA() {
   }
 }
 
+// ============================================================
+//  OFFLINE SCREEN UX
+// ============================================================
+function initOfflineScreen() {
+  const offlineScreen = document.createElement('div');
+  offlineScreen.id = 'global-offline-screen';
+  offlineScreen.innerHTML = `
+    <div class="offline-content">
+      <div class="offline-icon-container">
+        <i class="fa-solid fa-wifi"></i>
+        <div class="offline-slash"></div>
+      </div>
+      <h2>You're Offline</h2>
+      <p>Please check your internet connection. We'll automatically reconnect you when the network is back.</p>
+      <button class="offline-btn" onclick="window.location.reload()">Try Again</button>
+    </div>
+  `;
+  document.body.appendChild(offlineScreen);
+
+  const updateOnlineStatus = () => {
+    if (!navigator.onLine) {
+      offlineScreen.classList.add('active');
+    } else {
+      offlineScreen.classList.remove('active');
+    }
+  };
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  
+  // Initial check
+  updateOnlineStatus();
+}
+
+document.addEventListener('DOMContentLoaded', initOfflineScreen);
