@@ -148,6 +148,17 @@ async function addNotification({ title, message, type, targetLibrary, createdBy 
   // NOTE: For targetLibrary and createdBy, since we didn't add them to the Supabase schema, 
   // we will drop them for now and treat all notifications as global.
   
+  // TRIGGER PUSH TO ALL DEVICES
+  try {
+    await fetch('http://localhost:8081/api/send_push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, message, type })
+    });
+  } catch (e) {
+    console.error("Failed to send push notification via backend:", e);
+  }
+  
   return notif;
 }
 
@@ -293,4 +304,48 @@ function showNotificationToast(title, message, type) {
   }, 50);
 
   // Toast stays until closed by user
+}
+
+// ============================================================
+//  WEB PUSH SUBSCRIPTION
+// ============================================================
+function urlB64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+async function subscribeUserToPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.warn('Push messaging is not supported');
+    return;
+  }
+  
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const res = await fetch('http://localhost:8081/api/vapid_public_key');
+    if (!res.ok) throw new Error("Could not fetch VAPID key");
+    const data = await res.json();
+    const applicationServerKey = urlB64ToUint8Array(data.publicKey);
+    
+    const subscription = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: applicationServerKey
+    });
+    
+    await fetch('http://localhost:8081/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(subscription)
+    });
+    
+    console.log("User is subscribed to Background Push Notifications.");
+  } catch (err) {
+    console.error("Failed to subscribe user: ", err);
+  }
 }

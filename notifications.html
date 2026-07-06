@@ -389,6 +389,7 @@
           if (permission === "granted") {
             document.getElementById('enable-notifs-btn').style.display = 'none';
             new Notification("Notifications Enabled", { body: "You will now receive alerts for library updates!" });
+            if (typeof subscribeUserToPush === 'function') subscribeUserToPush();
           }
         });
       }

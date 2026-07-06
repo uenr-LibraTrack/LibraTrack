@@ -70,3 +70,51 @@ self.addEventListener('fetch', (e) => {
       })
   );
 });
+
+// Push Notifications Listener
+self.addEventListener('push', function(e) {
+  let payload = { title: 'New Update', message: 'You have a new library notification!' };
+  
+  if (e.data) {
+    try {
+      payload = JSON.parse(e.data.text());
+    } catch (err) {
+      payload.message = e.data.text();
+    }
+  }
+
+  const options = {
+    body: payload.message || payload.body,
+    icon: './uenr.png',
+    badge: './uenr.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: '2'
+    }
+  };
+
+  e.waitUntil(
+    self.registration.showNotification(payload.title || 'Library System', options)
+  );
+});
+
+// Notification Click Listener
+self.addEventListener('notificationclick', function(e) {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({ type: 'window' }).then(windowClients => {
+      // Check if there is already a window/tab open with the target URL
+      for (let i = 0; i < windowClients.length; i++) {
+        let client = windowClients[i];
+        if (client.url.includes('notifications.html') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // If not, open a new window
+      if (clients.openWindow) {
+        return clients.openWindow('./notifications.html');
+      }
+    })
+  );
+});
