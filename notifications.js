@@ -150,7 +150,7 @@ async function addNotification({ title, message, type, targetLibrary, createdBy 
   
   // TRIGGER PUSH TO ALL DEVICES
   try {
-    await fetch('http://localhost:8081/api/send_push', {
+    await fetch('https://libratrack-backend-g75f.onrender.com/api/send_push', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, message, type })
@@ -328,7 +328,7 @@ async function subscribeUserToPush() {
   
   try {
     const reg = await navigator.serviceWorker.ready;
-    const res = await fetch('http://localhost:8081/api/vapid_public_key');
+    const res = await fetch('https://libratrack-backend-g75f.onrender.com/api/vapid_public_key');
     if (!res.ok) throw new Error("Could not fetch VAPID key");
     const data = await res.json();
     const applicationServerKey = urlB64ToUint8Array(data.publicKey);
@@ -338,7 +338,7 @@ async function subscribeUserToPush() {
       applicationServerKey: applicationServerKey
     });
     
-    await fetch('http://localhost:8081/api/subscribe', {
+    await fetch('https://libratrack-backend-g75f.onrender.com/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(subscription)
