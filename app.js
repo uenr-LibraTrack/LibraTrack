@@ -165,7 +165,7 @@ function loginUser(id, name, role) {
 
 function logoutUser() {
   localStorage.removeItem(AUTH_KEY);
-  window.location.href = 'login.html';
+  window.location.href = 'entry.html';
 }
 
 function requireAuth() {
