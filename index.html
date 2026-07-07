@@ -13,7 +13,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script>
     // Enforce authentication instantly before page loads to prevent flash
-    if (!localStorage.getItem('uenrLibraTrack_auth')) {
+    try {
+      const raw = localStorage.getItem('uenrLibraTrack_auth');
+      const user = raw ? JSON.parse(raw) : null;
+      if (!user || !user.id) {
+        window.location.replace('entry.html');
+      }
+    } catch (e) {
       window.location.replace('entry.html');
     }
   </script>

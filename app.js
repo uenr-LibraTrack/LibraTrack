@@ -152,7 +152,12 @@ const AUTH_KEY = 'uenrLibraTrack_auth';
 function getCurrentUser() {
   try {
     const raw = localStorage.getItem(AUTH_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const user = JSON.parse(raw);
+      if (user && typeof user === 'object' && user.id) {
+        return user;
+      }
+    }
   } catch(e) {}
   return null;
 }
