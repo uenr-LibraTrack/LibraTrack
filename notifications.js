@@ -54,7 +54,11 @@ function initNotifsRealtime() {
   supabaseClient
     .channel('public:notifications')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
-      const newNotif = payload.new;
+      const newNotif = {
+        ...payload.new,
+        targetLibrary: payload.new.targetLibrary || 'all',
+        createdBy: payload.new.createdBy || 'admin'
+      };
       if (globalNotifsState && globalNotifsState.notifications) {
         globalNotifsState.notifications.unshift(newNotif);
         if (globalNotifsState.notifications.length > MAX_NOTIFS) {
@@ -97,7 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function getNotifications(filterType = 'all', targetLib = 'auto') {
   const state = loadNotifsState();
-  let notifs = state.notifications || [];
+  let notifs = (state.notifications || []).map(n => ({
+    ...n,
+    targetLibrary: n.targetLibrary || 'all',
+    createdBy: n.createdBy || 'admin'
+  }));
   
   if (filterType !== 'all') {
     notifs = notifs.filter(n => n.type === filterType);
@@ -126,6 +134,8 @@ async function addNotification({ title, message, type, targetLibrary, createdBy 
     title,
     message,
     type,
+    targetLibrary: targetLibrary || 'all',
+    createdBy: createdBy || 'admin',
     timestamp: Date.now(),
     isRead: false
   };
@@ -144,9 +154,6 @@ async function addNotification({ title, message, type, targetLibrary, createdBy 
       console.error("Supabase insert error:", e);
     }
   }
-  
-  // NOTE: For targetLibrary and createdBy, since we didn't add them to the Supabase schema, 
-  // we will drop them for now and treat all notifications as global.
   
   // TRIGGER PUSH TO ALL DEVICES
   try {
