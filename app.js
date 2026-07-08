@@ -91,7 +91,7 @@ async function saveState(state) {
     return;
   }
   
-  for (const lib of state.libraries) {
+  const updatePromises = state.libraries.map(async (lib) => {
     try {
       const { error } = await supabaseClient
         .from('libraries')
@@ -104,7 +104,9 @@ async function saveState(state) {
     } catch (e) {
       console.error("Supabase update error:", e);
     }
-  }
+  });
+  
+  await Promise.all(updatePromises);
 }
 
 function getState() {
