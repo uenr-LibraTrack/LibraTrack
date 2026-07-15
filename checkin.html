@@ -241,7 +241,7 @@
       </div>
 
       <div class="checkin-tip">
-        <i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i> <span>Already checked in? Scan the QR code again
+        <i class="fa-solid fa-lightbulb" style="color: #ffffff;"></i> <span>Already checked in? Scan the QR code again
           to <strong>check out</strong>.</span>
       </div>
     </div>
@@ -284,11 +284,14 @@
     const presetLib = urlParams.get('lib');
     if (presetLib) libInput.value = presetLib.toUpperCase();
 
-    function showAlert(type, title, msg) {
+    function showAlert(type, title, msg, playSound = true) {
       alert.className = `alert show alert-${type}`;
       alertTitle.innerHTML = title;
       alertMsg.innerHTML = msg;
       sessionStorage.setItem('checkinAlert', JSON.stringify({ type, title, msg }));
+      if (playSound && type === 'error') {
+        playErrorSound();
+      }
     }
 
     function hideAlert() {
@@ -388,7 +391,7 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
-        
+
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.type = 'sine';
@@ -422,7 +425,7 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
-        
+
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.type = 'triangle';
@@ -446,6 +449,40 @@
         gain2.connect(ctx.destination);
         osc2.start(ctx.currentTime + 0.15);
         osc2.stop(ctx.currentTime + 0.4);
+      } catch (e) {
+        console.log("Audio playback failed", e);
+      }
+    }
+
+    function playErrorSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'triangle';
+        osc1.frequency.setValueAtTime(329.63, ctx.currentTime); // E4 (Warning high tone)
+        gain1.gain.setValueAtTime(0, ctx.currentTime);
+        gain1.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.03);
+        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(ctx.currentTime);
+        osc1.stop(ctx.currentTime + 0.12);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(220.00, ctx.currentTime + 0.1); // A3 (Warning low tone)
+        gain2.gain.setValueAtTime(0, ctx.currentTime + 0.1);
+        gain2.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.13);
+        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(ctx.currentTime + 0.1);
+        osc2.stop(ctx.currentTime + 0.35);
       } catch (e) {
         console.log("Audio playback failed", e);
       }
@@ -540,7 +577,7 @@
     if (savedAlert) {
       try {
         const data = JSON.parse(savedAlert);
-        showAlert(data.type, data.title, data.msg);
+        showAlert(data.type, data.title, data.msg, false);
       } catch (e) {
         sessionStorage.removeItem('checkinAlert');
       }

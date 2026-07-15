@@ -33,6 +33,9 @@ function adminSetCapacity(libId, newCapacity) {
   return true;
 }
 
+// ============================================================
+//  UI RENDER (called from admin.html)
+// ============================================================
 function adminToggleOpen(libId, isOpen) {
   const state = getState();
   const lib   = state.libraries.find(l => l.id === libId);
