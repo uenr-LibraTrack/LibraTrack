@@ -1,0 +1,18 @@
+# Environment variables (contains private API keys)
+.env
+
+# Local database files
+database.json
+notifications.json
+subscriptions.json
+vapid_keys.json
+
+# Python caching
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating system files
+.DS_Store
+Thumbs.db

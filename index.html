@@ -10,6 +10,7 @@
   <meta name="description"
     content="Check real-time study space occupancy and seat availability across UENR libraries." />
   <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="chatbot.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script>
     // Enforce authentication instantly before page loads to prevent flash
@@ -216,6 +217,11 @@
               </span>
             </label>
           </div>
+          <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 6px; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px;">
+            <span style="font-size: 12px; color: var(--text-secondary);">Gemini API Key (Backup)</span>
+            <input type="password" id="gemini-key-input" placeholder="AI Key..." 
+              style="flex: 1; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 12px; outline: none; width: 100%;">
+          </div>
         </div>
       </div>
     </div>
@@ -386,6 +392,7 @@
   <script src="supabaseClient.js?v=2"></script>
   <script src="notifications.js?v=2"></script>
   <script src="app.js?v=2"></script>
+  <script src="chatbot.js"></script>
   <script>
     function buildLibraryCard(lib, index) {
       const occ = getOccupancy(lib.id);

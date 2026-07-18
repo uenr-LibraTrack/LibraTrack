@@ -3,6 +3,9 @@ import socketserver
 import json
 import os
 import traceback
+import urllib.request
+import urllib.error
+
 
 PORT = int(os.environ.get('PORT', 8081))
 DATA_FILE = 'database.json'
@@ -164,6 +167,87 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                     traceback.print_exc()
             self.send_response(400)
             self.end_headers()
+
+        elif self.path == '/api/chat':
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length > 0:
+                post_data = self.rfile.read(content_length)
+                try:
+                    request_body = json.loads(post_data.decode('utf-8'))
+                    contents = request_body.get('contents', [])
+                    system_instruction = request_body.get('systemInstruction', '')
+
+                    # Fetch API Key from environment variable
+                    api_key = os.environ.get('GEMINI_API_KEY')
+                    
+                    # Alternatively, if there's a local .env file we can load it
+                    if not api_key:
+                        if os.path.exists('.env'):
+                            with open('.env', 'r', encoding='utf-8') as env_file:
+                                for line in env_file:
+                                    if line.strip().startswith('GEMINI_API_KEY='):
+                                        api_key = line.strip().split('=', 1)[1].strip().strip('"').strip("'")
+                                        break
+                    
+                    if not api_key:
+                        self.send_response(400)
+                        self.send_header('Content-Type', 'application/json')
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "GEMINI_API_KEY not configured on server"}).encode('utf-8'))
+                        return
+
+                    # Build Gemini request payload
+                    gemini_payload = {
+                        "contents": contents
+                    }
+                    if system_instruction:
+                        gemini_payload["systemInstruction"] = {
+                            "parts": [{"text": system_instruction}]
+                        }
+
+                    # Make direct HTTPS request to Google Generative Language API
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={api_key}"
+                    req = urllib.request.Request(
+                        url,
+                        data=json.dumps(gemini_payload).encode('utf-8'),
+                        headers={'Content-Type': 'application/json'},
+                        method='POST'
+                    )
+
+                    try:
+                        with urllib.request.urlopen(req, timeout=15) as res:
+                            response_data = json.loads(res.read().decode('utf-8'))
+                            candidates = response_data.get('candidates', [])
+                            if candidates and len(candidates) > 0:
+                                text_response = candidates[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                                self.send_response(200)
+                                self.send_header('Content-Type', 'application/json')
+                                self.end_headers()
+                                self.wfile.write(json.dumps({"text": text_response}).encode('utf-8'))
+                                return
+                            else:
+                                raise Exception("Empty response from Gemini API")
+                    except urllib.error.HTTPError as he:
+                        error_content = he.read().decode('utf-8')
+                        print(f"Gemini API HTTP Error: {he.code} - {error_content}")
+                        self.send_response(he.code)
+                        self.send_header('Content-Type', 'application/json')
+                        self.end_headers()
+                        self.wfile.write(error_content.encode('utf-8'))
+                        return
+                    except Exception as e:
+                        print("Error calling Gemini API:", e)
+                        self.send_response(500)
+                        self.send_header('Content-Type', 'application/json')
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                        return
+
+                except Exception as e:
+                    print("Error parsing chat POST:", e)
+            self.send_response(400)
+            self.end_headers()
+
         else:
             self.send_response(404)
             self.end_headers()

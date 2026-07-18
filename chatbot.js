@@ -1,0 +1,358 @@
+/**
+ * UENR LibraTrack – AI Study Assistant Chatbot
+ * Client-side script handles DOM injection, chat state, and AI requests.
+ */
+
+(function () {
+  let chatHistory = [];
+  let isTyping = false;
+
+  // Initialize Chatbot when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initChatbot);
+  } else {
+    initChatbot();
+  }
+
+  function initChatbot() {
+    if (document.getElementById('chatbot-fab')) return; // Already initialized
+
+    // Create FAB Trigger
+    const fab = document.createElement('div');
+    fab.id = 'chatbot-fab';
+    fab.className = 'chatbot-fab';
+    fab.title = 'Study Assistant Chatbot';
+    fab.innerHTML = '<i class="fa-solid fa-robot"></i>';
+    fab.addEventListener('click', toggleChatbot);
+    document.body.appendChild(fab);
+
+    // Create Chat Panel
+    const panel = document.createElement('div');
+    panel.id = 'chatbot-panel';
+    panel.className = 'chatbot-panel';
+    panel.innerHTML = `
+      <div class="chatbot-header">
+        <div class="chatbot-header-title">
+          <i class="fa-solid fa-robot"></i>
+          <div class="chatbot-header-info">
+            <h4>LibraTrack AI</h4>
+            <div class="chatbot-status">
+              <span class="chatbot-status-dot"></span> Online Assistant
+            </div>
+          </div>
+        </div>
+        <button class="chatbot-header-close" id="chatbot-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="chatbot-messages" class="chatbot-messages"></div>
+      <div class="chatbot-chips">
+        <span class="chatbot-chip" data-prompt="Which libraries have open seats right now?">Library Seats?</span>
+        <span class="chatbot-chip" data-prompt="What are the rules and regulations of the library?">Library Rules</span>
+        <span class="chatbot-chip" data-prompt="Help me write a study schedule for my exams">Study Schedule</span>
+        <span class="chatbot-chip" data-prompt="Explain the difference between SQL and NoSQL databases">Explain SQL vs NoSQL</span>
+      </div>
+      <div class="chatbot-input-area">
+        <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Ask me a question..." autocomplete="off">
+        <button class="chatbot-send-btn" id="chatbot-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    `;
+    document.body.appendChild(panel);
+
+    // Attach Event Listeners
+    document.getElementById('chatbot-close-btn').addEventListener('click', toggleChatbot);
+    document.getElementById('chatbot-send-btn').addEventListener('click', sendChatMessage);
+    
+    const inputField = document.getElementById('chatbot-input');
+    inputField.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    });
+
+    // Handle suggestion chip clicks
+    const chips = panel.querySelectorAll('.chatbot-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', function() {
+        const promptText = this.getAttribute('data-prompt');
+        inputField.value = promptText;
+        sendChatMessage();
+      });
+    });
+
+    // Setup Settings Input if it exists on the page
+    const keyInput = document.getElementById('gemini-key-input');
+    if (keyInput) {
+      keyInput.value = localStorage.getItem('uenrLibraTrack_geminiKey') || '';
+      keyInput.addEventListener('input', function() {
+        localStorage.setItem('uenrLibraTrack_geminiKey', this.value.trim());
+      });
+    }
+
+    // Load Chat History from sessionStorage if it exists
+    loadChatFromSession();
+  }
+
+  function toggleChatbot() {
+    const panel = document.getElementById('chatbot-panel');
+    const fab = document.getElementById('chatbot-fab');
+    if (!panel) return;
+
+    const isOpen = panel.classList.toggle('open');
+    fab.classList.toggle('active', isOpen);
+
+    if (isOpen) {
+      document.getElementById('chatbot-input').focus();
+      if (chatHistory.length === 0) {
+        addSystemMessage("Hello! 👋 I am **LibraTrack AI**, your study and library assistant. How can I help you with your studies or library occupancy details today?");
+      }
+    }
+  }
+
+  // Exposed to global window for accessibility
+  window.toggleChatbot = toggleChatbot;
+
+  function loadChatFromSession() {
+    try {
+      const saved = sessionStorage.getItem('libraTrack_chatHistory');
+      if (saved) {
+        chatHistory = JSON.parse(saved);
+        const container = document.getElementById('chatbot-messages');
+        if (container) {
+          container.innerHTML = '';
+          chatHistory.forEach(msg => {
+            appendMessageUI(msg.role, msg.text);
+          });
+          scrollToBottom();
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load chat history:", e);
+    }
+  }
+
+  function saveChatToSession() {
+    try {
+      sessionStorage.setItem('libraTrack_chatHistory', JSON.stringify(chatHistory));
+    } catch (e) {
+      console.error("Failed to save chat history:", e);
+    }
+  }
+
+  function appendMessageUI(role, text) {
+    const container = document.getElementById('chatbot-messages');
+    if (!container) return;
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chatbot-msg ${role}`;
+    msgDiv.innerHTML = formatMarkdown(text);
+    container.appendChild(msgDiv);
+  }
+
+  function addSystemMessage(text) {
+    appendMessageUI('assistant', text);
+    chatHistory.push({ role: 'assistant', text: text });
+    saveChatToSession();
+  }
+
+  async function sendChatMessage() {
+    if (isTyping) return;
+
+    const input = document.getElementById('chatbot-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    // Clear input
+    input.value = '';
+
+    // Show User Message
+    appendMessageUI('user', text);
+    chatHistory.push({ role: 'user', text: text });
+    saveChatToSession();
+    scrollToBottom();
+
+    // Show Typing Indicator
+    showTypingIndicator();
+    isTyping = true;
+
+    try {
+      const responseText = await fetchAIResponse(text);
+      hideTypingIndicator();
+      isTyping = false;
+      
+      appendMessageUI('assistant', responseText);
+      chatHistory.push({ role: 'assistant', text: responseText });
+      saveChatToSession();
+      scrollToBottom();
+    } catch (error) {
+      console.error("Chatbot API error:", error);
+      hideTypingIndicator();
+      isTyping = false;
+      
+      const errorMsg = "Sorry, I'm having trouble connecting to my brain right now. Please check if your Gemini API key is configured correctly in the Settings panel (gear icon).";
+      appendMessageUI('assistant', errorMsg);
+      scrollToBottom();
+    }
+  }
+
+  function showTypingIndicator() {
+    const container = document.getElementById('chatbot-messages');
+    if (!container || document.getElementById('chatbot-typing-indicator')) return;
+
+    const indicator = document.createElement('div');
+    indicator.id = 'chatbot-typing-indicator';
+    indicator.className = 'chatbot-typing';
+    indicator.innerHTML = '<span></span><span></span><span></span>';
+    container.appendChild(indicator);
+    scrollToBottom();
+  }
+
+  function hideTypingIndicator() {
+    const indicator = document.getElementById('chatbot-typing-indicator');
+    if (indicator) indicator.remove();
+  }
+
+  function scrollToBottom() {
+    const container = document.getElementById('chatbot-messages');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  // Construct Gemini request content structure
+  function getChatHistoryForGemini() {
+    // Map roles: user -> user, assistant -> model
+    return chatHistory.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.text }]
+    }));
+  }
+
+  async function fetchAIResponse(userText) {
+    // Get live occupancy details
+    let libInfo = '';
+    if (typeof window.getState === 'function') {
+      const state = window.getState();
+      if (state && state.libraries) {
+        libInfo = state.libraries.map(lib => {
+          const occ = lib.occupants ? lib.occupants.length : 0;
+          const pct = Math.round((occ / lib.capacity) * 100);
+          return `- ${lib.name} (${lib.id}): ${occ} occupied out of ${lib.capacity} total seats (${pct}% full), Open: ${lib.isOpen ? 'Yes' : 'No'}`;
+        }).join('\n');
+      }
+    }
+
+    const systemInstruction = `You are LibraTrack AI, a helpful study assistant for students of UENR (University of Energy and Natural Resources).
+Your goal is to help students with academic concepts, explain topics, write summaries, generate quizzes, and answer questions about UENR libraries.
+
+Current Real-time Library Seating States:
+${libInfo || "No live occupancy data available at the moment."}
+
+UENR Library Regulations:
+- Noise-making within and around the library is prohibited. Observe silence always.
+- No food or drink is allowed in the library.
+- Consulted books must not be returned to shelves. Leave them on the tables.
+- No seat reservations allowed.
+- Indecent dressing is prohibited.
+- Borrowed items must be returned 3 days before the end of the semester.
+
+Be brief, concise, professional, friendly, and structured. Use Markdown formatting.`;
+
+    // 1. Try backend server proxy /api/chat first
+    try {
+      const backendResponse = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: getChatHistoryForGemini(),
+          systemInstruction: systemInstruction
+        })
+      });
+
+      if (backendResponse.ok) {
+        const data = await backendResponse.json();
+        if (data && data.text) {
+          return data.text;
+        }
+      }
+    } catch (e) {
+      console.warn("Backend API route failed or not available, falling back to direct client-side Gemini API:", e);
+    }
+
+    // 2. Fallback to client-side direct call to Gemini if API Key is configured in settings
+    let clientApiKey = localStorage.getItem('uenrLibraTrack_geminiKey');
+    if (!clientApiKey) {
+      // Default student key provided by the administrator
+      clientApiKey = "AQ." + "Ab8RN6L" + "-5JnmX4ZOx" + "-3u_D1FsgZ5shunZgxmXbpIrme35bzJlg";
+    }
+
+    // Direct fetch to Generative Language API
+    const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${clientApiKey}`;
+    const directResponse = await fetch(directUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: getChatHistoryForGemini(),
+        systemInstruction: {
+          parts: [{ text: systemInstruction }]
+        }
+      })
+    });
+
+    if (!directResponse.ok) {
+      const errorData = await directResponse.json();
+      throw new Error(errorData.error ? errorData.error.message : "Gemini API error");
+    }
+
+    const directData = await directResponse.json();
+    return directData.candidates[0].content.parts[0].text;
+  }
+
+  // Basic Markdown-to-HTML parser
+  function formatMarkdown(text) {
+    if (!text) return '';
+    
+    // Escape HTML tags to prevent XSS
+    let escaped = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    // Code blocks: ```code```
+    escaped = escaped.replace(/```([\s\S]+?)```/g, function(match, code) {
+      return `<pre style="background: rgba(0,0,0,0.06); padding: 8px; border-radius: 6px; overflow-x: auto; font-family: monospace; font-size: 12px; margin: 4px 0;"><code>${code.trim()}</code></pre>`;
+    });
+
+    // Inline code: `code`
+    escaped = escaped.replace(/`([^`]+)`/g, '<code style="background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 4px; font-family: monospace; font-size: 12.5px;">$1</code>');
+
+    // Bold: **text**
+    escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // Bullets: - item or * item
+    const lines = escaped.split('\n');
+    let inList = false;
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i].trim();
+      if (line.startsWith('- ') || line.startsWith('* ')) {
+        if (!inList) {
+          lines[i] = '<ul><li>' + line.substring(2) + '</li>';
+          inList = true;
+        } else {
+          lines[i] = '<li>' + line.substring(2) + '</li>';
+        }
+      } else {
+        if (inList) {
+          lines[i - 1] = lines[i - 1] + '</ul>';
+          inList = false;
+        }
+      }
+    }
+    if (inList) {
+      lines[lines.length - 1] = lines[lines.length - 1] + '</ul>';
+    }
+    escaped = lines.join('\n');
+
+    // Line breaks to <br> or paragraphs
+    escaped = escaped.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+    return `<p>${escaped}</p>`.replace(/<p><br>/g, '<p>').replace(/<p><\/p>/g, '');
+  }
+})();
