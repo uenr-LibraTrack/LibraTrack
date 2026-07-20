@@ -410,10 +410,29 @@ function renderNotificationHistory() {
 // ============================================================
 //  GEMINI API KEY ADMIN CONFIGURATION
 // ============================================================
-function initAdminGeminiKeyField() {
+async function initAdminGeminiKeyField() {
   const input = document.getElementById('admin-gemini-key');
   if (!input) return;
+  
+  // Try loading from localStorage first
   input.value = localStorage.getItem('uenrLibraTrack_geminiKey') || '';
+  
+  // Try loading from Supabase
+  if (typeof supabaseClient !== 'undefined') {
+    try {
+      const { data, error } = await supabaseClient
+        .from('libraries')
+        .select('name')
+        .eq('id', 'GEMINI_CONFIG')
+        .single();
+      if (data && data.name) {
+        input.value = data.name;
+        localStorage.setItem('uenrLibraTrack_geminiKey', data.name);
+      }
+    } catch (e) {
+      console.warn("Could not load Gemini API Key from Supabase settings:", e);
+    }
+  }
 }
 
 function toggleAdminKeyVisibility() {
@@ -439,7 +458,24 @@ async function handleSaveGeminiKey() {
     localStorage.removeItem('uenrLibraTrack_geminiKey');
   }
 
-  // 2. Save on the backend server so all students get the updated key automatically
+  let savedOnSupabase = false;
+
+  // 2. Save to Supabase (so static hosting like GitHub Pages can share it)
+  if (typeof supabaseClient !== 'undefined') {
+    try {
+      const { error } = await supabaseClient
+        .from('libraries')
+        .upsert({ id: 'GEMINI_CONFIG', name: newKey, occupants: [], isOpen: false, capacity: 0 });
+        
+      if (error) throw error;
+      savedOnSupabase = true;
+      console.log("Saved Gemini API Key to Supabase successfully.");
+    } catch (e) {
+      console.error("Failed to save Gemini Key to Supabase:", e);
+    }
+  }
+
+  // 3. Save on the backend server so all students get the updated key automatically
   try {
     const res = await fetch('/api/set_gemini_key', {
       method: 'POST',
@@ -448,15 +484,18 @@ async function handleSaveGeminiKey() {
     });
 
     if (res.ok) {
-      showToast('Gemini API Key updated successfully on server');
+      showToast('Gemini API Key updated successfully on server' + (savedOnSupabase ? ' and database' : ''));
     } else {
       const errData = await res.json();
       showToast(errData.error || 'Failed to update key on server', 'error');
     }
   } catch (e) {
     console.error("Failed to update server Gemini Key:", e);
-    // If the server is offline (e.g. client-only mode), that's fine, let them know it's saved locally
-    showToast('Gemini Key saved locally (Offline mode)');
+    if (savedOnSupabase) {
+      showToast('Gemini Key saved successfully (Cloud Sync)');
+    } else {
+      showToast('Gemini Key saved locally (Offline mode)');
+    }
   }
 }
 

@@ -61,7 +61,7 @@ async function loadStateFromServer() {
     
     if (libraries && libraries.length > 0) {
       globalState = {
-        libraries: libraries,
+        libraries: libraries.filter(lib => lib.id !== 'GEMINI_CONFIG'),
         lastUpdated: Date.now()
       };
       

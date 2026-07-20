@@ -250,7 +250,7 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                         }
 
                     # Make direct HTTPS request to Google Generative Language API
-                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={api_key}"
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
                     req = urllib.request.Request(
                         url,
                         data=json.dumps(gemini_payload).encode('utf-8'),

@@ -331,13 +331,30 @@ Be brief, concise, professional, friendly, and structured. Use Markdown formatti
 
     // 2. Fallback to client-side direct call to Gemini if API Key is configured in settings
     let clientApiKey = localStorage.getItem('uenrLibraTrack_geminiKey');
+    
+    if (typeof supabaseClient !== 'undefined') {
+      try {
+        const { data } = await supabaseClient
+          .from('libraries')
+          .select('name')
+          .eq('id', 'GEMINI_CONFIG')
+          .single();
+        if (data && data.name) {
+          clientApiKey = data.name;
+          localStorage.setItem('uenrLibraTrack_geminiKey', data.name);
+        }
+      } catch (e) {
+        console.warn("Could not load Gemini API Key from Supabase in chatbot:", e);
+      }
+    }
+
     if (!clientApiKey) {
       // Default student key provided by the administrator
       clientApiKey = "AIzaSy" + "Ab8RN6L" + "-5JnmX4ZOx" + "-3u_D1FsgZ5shunZgxmXbpIrme35bzJlg";
     }
 
     // Direct fetch to Generative Language API
-    const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${clientApiKey}`;
+    const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${clientApiKey}`;
     const directResponse = await fetch(directUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
