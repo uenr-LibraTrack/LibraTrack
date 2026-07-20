@@ -1,0 +1,66 @@
+{
+  "official_site": "https://uenr.edu.gh/office/university-library/",
+  "about": "The UENR University Library Sunyani is the central resource hub supporting teaching, learning, and research at the University of Energy and Natural Resources.",
+  "contact": {
+    "phone": "Registrar's Office: +233 (0) 035 229 0382, Relations Office: +233 (0) 352 290 390, Support: +233553581475",
+    "email": "uro@uenr.edu.gh",
+    "post_office": "Post Office Box 214, Sunyani Ghana, West Africa"
+  },
+  "staff": [
+    {
+      "name": "Harriet Fosua Attafuah",
+      "role": "Senior Assistant Librarian",
+      "profile": "https://uenr.edu.gh/staff/harriet-fosua-attafuah/"
+    },
+    {
+      "name": "Miriam Linda Akeriwe",
+      "role": "University Librarian",
+      "profile": "https://uenr.edu.gh/staff/miriam-linda-akeriwe/"
+    },
+    {
+      "name": "Matilda Asafo-Adyei",
+      "role": "Senior Administrative Assistant",
+      "profile": "https://uenr.edu.gh/staff/matilda-asafo-agyei/"
+    },
+    {
+      "name": "Samuel Twumasi Appiah",
+      "role": "Senior Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/samuel-twumasi-appiah/"
+    },
+    {
+      "name": "John Adamba",
+      "role": "Principal Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/john-adamba-2/"
+    },
+    {
+      "name": "Pearl Owusua Amanquah",
+      "role": "Principal Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/pearl-owusua-amanquah/"
+    },
+    {
+      "name": "Richard Adu-Gyamfi",
+      "role": "Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/richard-adu-gyamfi/"
+    },
+    {
+      "name": "Richard Aa-Som Gu-Imenga",
+      "role": "Senior Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/richard-aa-som-gu-imenga/"
+    },
+    {
+      "name": "Elizabeth Boakyewaa Peprah",
+      "role": "Senior Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/elizabeth-boakyewaa-peprah/"
+    },
+    {
+      "name": "Mary Asare",
+      "role": "Senior Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/mary-asare/"
+    },
+    {
+      "name": "Ebenezer Amoah Cheremeh",
+      "role": "Senior Library Assistant",
+      "profile": "https://uenr.edu.gh/staff/ebenezer-amoah-cheremeh/"
+    }
+  ]
+}
