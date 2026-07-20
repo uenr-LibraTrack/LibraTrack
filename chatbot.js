@@ -349,8 +349,8 @@ Be brief, concise, professional, friendly, and structured. Use Markdown formatti
     }
 
     if (!clientApiKey) {
-      // Default student key provided by the administrator
-      clientApiKey = "AIzaSy" + "Ab8RN6L" + "-5JnmX4ZOx" + "-3u_D1FsgZ5shunZgxmXbpIrme35bzJlg";
+      // API Key should be set by the administrator in the Admin Panel
+      console.warn("Gemini API Key is not configured. Please save the API Key in the Admin Panel.");
     }
 
     // Direct fetch to Generative Language API
