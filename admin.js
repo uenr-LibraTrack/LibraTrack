@@ -406,3 +406,57 @@ function renderNotificationHistory() {
     </table>
   `;
 }
+
+// ============================================================
+//  GEMINI API KEY ADMIN CONFIGURATION
+// ============================================================
+function initAdminGeminiKeyField() {
+  const input = document.getElementById('admin-gemini-key');
+  if (!input) return;
+  input.value = localStorage.getItem('uenrLibraTrack_geminiKey') || '';
+}
+
+function toggleAdminKeyVisibility() {
+  const input = document.getElementById('admin-gemini-key');
+  const icon = document.getElementById('admin-gemini-key-toggle');
+  if (!input || !icon) return;
+
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+  icon.className = isPassword ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+}
+
+async function handleSaveGeminiKey() {
+  const input = document.getElementById('admin-gemini-key');
+  if (!input) return;
+
+  const newKey = input.value.trim();
+  
+  // 1. Save locally in localStorage for client-side direct call fallback
+  if (newKey) {
+    localStorage.setItem('uenrLibraTrack_geminiKey', newKey);
+  } else {
+    localStorage.removeItem('uenrLibraTrack_geminiKey');
+  }
+
+  // 2. Save on the backend server so all students get the updated key automatically
+  try {
+    const res = await fetch('/api/set_gemini_key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gemini_key: newKey })
+    });
+
+    if (res.ok) {
+      showToast('Gemini API Key updated successfully on server');
+    } else {
+      const errData = await res.json();
+      showToast(errData.error || 'Failed to update key on server', 'error');
+    }
+  } catch (e) {
+    console.error("Failed to update server Gemini Key:", e);
+    // If the server is offline (e.g. client-only mode), that's fine, let them know it's saved locally
+    showToast('Gemini Key saved locally (Offline mode)');
+  }
+}
+

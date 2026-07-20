@@ -333,7 +333,7 @@ Be brief, concise, professional, friendly, and structured. Use Markdown formatti
     let clientApiKey = localStorage.getItem('uenrLibraTrack_geminiKey');
     if (!clientApiKey) {
       // Default student key provided by the administrator
-      clientApiKey = "AQ." + "Ab8RN6L" + "-5JnmX4ZOx" + "-3u_D1FsgZ5shunZgxmXbpIrme35bzJlg";
+      clientApiKey = "AIzaSy" + "Ab8RN6L" + "-5JnmX4ZOx" + "-3u_D1FsgZ5shunZgxmXbpIrme35bzJlg";
     }
 
     // Direct fetch to Generative Language API

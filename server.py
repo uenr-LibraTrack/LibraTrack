@@ -168,6 +168,50 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(400)
             self.end_headers()
 
+        elif self.path == '/api/set_gemini_key':
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length > 0:
+                post_data = self.rfile.read(content_length)
+                try:
+                    request_body = json.loads(post_data.decode('utf-8'))
+                    new_key = request_body.get('gemini_key', '').strip()
+                    
+                    # Update .env file
+                    env_lines = []
+                    key_updated = False
+                    if os.path.exists('.env'):
+                        with open('.env', 'r', encoding='utf-8') as env_file:
+                            for line in env_file:
+                                if line.strip().startswith('GEMINI_API_KEY='):
+                                    env_lines.append(f"GEMINI_API_KEY={new_key}\n")
+                                    key_updated = True
+                                else:
+                                    env_lines.append(line)
+                    
+                    if not key_updated:
+                        env_lines.append(f"GEMINI_API_KEY={new_key}\n")
+                    
+                    with open('.env', 'w', encoding='utf-8') as env_file:
+                        env_file.writelines(env_lines)
+                        
+                    # Update in-memory environment variable
+                    os.environ['GEMINI_API_KEY'] = new_key
+                    
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"status": "ok"}).encode('utf-8'))
+                    return
+                except Exception as e:
+                    print("Error updating Gemini API key:", e)
+                    self.send_response(500)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                    return
+            self.send_response(400)
+            self.end_headers()
+
         elif self.path == '/api/chat':
             content_length = int(self.headers.get('Content-Length', 0))
             if content_length > 0:

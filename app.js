@@ -683,3 +683,28 @@ function initOfflineScreen() {
 }
 
 document.addEventListener('DOMContentLoaded', initOfflineScreen);
+
+// ============================================================
+//  GEMINI API KEY SETTING
+// ============================================================
+function showToast(msg, type = 'success') {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position:fixed;bottom:24px;right:24px;z-index:9999;
+      padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;
+      font-family:'Inter',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.4);
+      transition:all 0.3s ease;opacity:0;transform:translateY(16px);pointer-events:none;`;
+    document.body.appendChild(toast);
+  }
+  toast.style.background = type === 'error' ? 'rgba(239,68,68,0.9)' : 'rgba(34,197,94,0.9)';
+  toast.style.color       = 'white';
+  toast.textContent       = msg;
+  toast.style.opacity     = '1';
+  toast.style.transform   = 'translateY(0)';
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(16px)'; }, 3000);
+}
+window.showToast = showToast;
+
