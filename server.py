@@ -279,8 +279,8 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                             "parts": [{"text": str(raw_sys_inst)}]
                         }
 
-                    # Try models in order (gemini-1.5-flash -> gemini-2.0-flash)
-                    models_to_try = ['gemini-1.5-flash', 'gemini-2.0-flash']
+                    # Try models in order (with multi-model rate-limit fallback)
+                    models_to_try = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-8b', 'gemini-2.5-flash']
                     last_exception = None
 
                     for model in models_to_try:

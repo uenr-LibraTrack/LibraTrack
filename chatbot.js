@@ -391,8 +391,8 @@ Be brief, concise, professional, friendly, and structured. Use Markdown formatti
       throw new Error("GEMINI_API_KEY not configured. Please save a valid API Key in the Admin Panel.");
     }
 
-    // Direct fetch to Generative Language API (try gemini-1.5-flash then fallback to gemini-2.0-flash)
-    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash'];
+    // Direct fetch to Generative Language API (with multi-model rate-limit fallback)
+    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-8b', 'gemini-2.5-flash'];
     let lastError = null;
 
     for (const model of modelsToTry) {
