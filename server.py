@@ -218,13 +218,43 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                 post_data = self.rfile.read(content_length)
                 try:
                     request_body = json.loads(post_data.decode('utf-8'))
-                    contents = request_body.get('contents', [])
-                    system_instruction = request_body.get('systemInstruction', '')
+                    raw_contents = request_body.get('contents', [])
+                    raw_sys_inst = request_body.get('systemInstruction', '')
 
-                    # Fetch API Key from environment variable
+                    # Extract string system instruction if passed as object
+                    if isinstance(raw_sys_inst, dict):
+                        parts = raw_sys_inst.get('parts', [])
+                        if parts and isinstance(parts[0], dict):
+                            raw_sys_inst = parts[0].get('text', '')
+                        else:
+                            raw_sys_inst = str(raw_sys_inst)
+
+                    # Sanitize contents: Ensure first role is 'user' and roles alternate
+                    contents = []
+                    first_user_idx = -1
+                    for idx, item in enumerate(raw_contents):
+                        if isinstance(item, dict) and item.get('role') == 'user':
+                            first_user_idx = idx
+                            break
+
+                    if first_user_idx != -1:
+                        last_role = None
+                        for item in raw_contents[first_user_idx:]:
+                            if not isinstance(item, dict):
+                                continue
+                            role = 'user' if item.get('role') == 'user' else 'model'
+                            if role == last_role and contents:
+                                text_val = item.get('parts', [{}])[0].get('text', '')
+                                contents[-1]['parts'][0]['text'] += f"\n{text_val}"
+                            else:
+                                contents.append({
+                                    "role": role,
+                                    "parts": item.get('parts', [{"text": ""}])
+                                })
+                                last_role = role
+
+                    # Fetch API Key from environment variable or .env
                     api_key = os.environ.get('GEMINI_API_KEY')
-                    
-                    # Alternatively, if there's a local .env file we can load it
                     if not api_key:
                         if os.path.exists('.env'):
                             with open('.env', 'r', encoding='utf-8') as env_file:
@@ -233,7 +263,7 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                                         api_key = line.strip().split('=', 1)[1].strip().strip('"').strip("'")
                                         break
                     
-                    if not api_key:
+                    if not api_key or not api_key.strip():
                         self.send_response(400)
                         self.send_header('Content-Type', 'application/json')
                         self.end_headers()
@@ -244,47 +274,51 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                     gemini_payload = {
                         "contents": contents
                     }
-                    if system_instruction:
+                    if raw_sys_inst:
                         gemini_payload["systemInstruction"] = {
-                            "parts": [{"text": system_instruction}]
+                            "parts": [{"text": str(raw_sys_inst)}]
                         }
 
-                    # Make direct HTTPS request to Google Generative Language API
-                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-                    req = urllib.request.Request(
-                        url,
-                        data=json.dumps(gemini_payload).encode('utf-8'),
-                        headers={'Content-Type': 'application/json'},
-                        method='POST'
-                    )
+                    # Try models in order (gemini-1.5-flash -> gemini-2.0-flash)
+                    models_to_try = ['gemini-1.5-flash', 'gemini-2.0-flash']
+                    last_exception = None
 
-                    try:
-                        with urllib.request.urlopen(req, timeout=15) as res:
-                            response_data = json.loads(res.read().decode('utf-8'))
-                            candidates = response_data.get('candidates', [])
-                            if candidates and len(candidates) > 0:
-                                text_response = candidates[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-                                self.send_response(200)
-                                self.send_header('Content-Type', 'application/json')
-                                self.end_headers()
-                                self.wfile.write(json.dumps({"text": text_response}).encode('utf-8'))
-                                return
-                            else:
-                                raise Exception("Empty response from Gemini API")
-                    except urllib.error.HTTPError as he:
-                        error_content = he.read().decode('utf-8')
-                        print(f"Gemini API HTTP Error: {he.code} - {error_content}")
-                        self.send_response(he.code)
+                    for model in models_to_try:
+                        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key.strip()}"
+                        req = urllib.request.Request(
+                            url,
+                            data=json.dumps(gemini_payload).encode('utf-8'),
+                            headers={'Content-Type': 'application/json'},
+                            method='POST'
+                        )
+
+                        try:
+                            with urllib.request.urlopen(req, timeout=15) as res:
+                                response_data = json.loads(res.read().decode('utf-8'))
+                                candidates = response_data.get('candidates', [])
+                                if candidates and len(candidates) > 0:
+                                    text_response = candidates[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                                    self.send_response(200)
+                                    self.send_header('Content-Type', 'application/json')
+                                    self.end_headers()
+                                    self.wfile.write(json.dumps({"text": text_response}).encode('utf-8'))
+                                    return
+                                else:
+                                    raise Exception("Empty response from Gemini API")
+                        except urllib.error.HTTPError as he:
+                            error_content = he.read().decode('utf-8')
+                            print(f"Gemini API ({model}) HTTP Error: {he.code} - {error_content}")
+                            last_exception = (he.code, error_content)
+                        except Exception as e:
+                            print(f"Error calling Gemini API ({model}):", e)
+                            last_exception = (500, json.dumps({"error": str(e)}))
+
+                    if last_exception:
+                        status_code, err_msg = last_exception
+                        self.send_response(status_code)
                         self.send_header('Content-Type', 'application/json')
                         self.end_headers()
-                        self.wfile.write(error_content.encode('utf-8'))
-                        return
-                    except Exception as e:
-                        print("Error calling Gemini API:", e)
-                        self.send_response(500)
-                        self.send_header('Content-Type', 'application/json')
-                        self.end_headers()
-                        self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                        self.wfile.write(err_msg.encode('utf-8') if isinstance(err_msg, str) else err_msg)
                         return
 
                 except Exception as e:

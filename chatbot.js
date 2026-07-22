@@ -217,7 +217,17 @@
       hideTypingIndicator();
       isTyping = false;
 
-      const errorMsg = "Sorry, I'm having trouble connecting to my brain right now.";
+      let errorMsg = "Sorry, I'm having trouble connecting to my AI brain right now.";
+      const errStr = (error && error.message) ? error.message : String(error);
+      
+      if (errStr.includes("API_KEY") || errStr.includes("API key") || errStr.includes("not configured")) {
+        errorMsg = "⚠️ **AI Assistant Configuration Issue**\n\nThe Gemini API Key is missing or invalid. Please configure a valid Gemini API Key in the Admin Panel settings or `.env` file.";
+      } else if (errStr.includes("Quota") || errStr.includes("429")) {
+        errorMsg = "⚠️ **Rate Limit Exceeded**\n\nThe AI assistant rate limit was reached. Please wait a moment and try again.";
+      } else if (errStr) {
+        errorMsg = `Sorry, I'm having trouble connecting to my AI brain right now.\n\n*Error details: ${errStr}*`;
+      }
+
       appendMessageUI('assistant', errorMsg);
       scrollToBottom();
     }
@@ -247,13 +257,35 @@
     }
   }
 
-  // Construct Gemini request content structure
+  // Construct Gemini request content structure ensuring valid schema (must start with user)
   function getChatHistoryForGemini() {
-    // Map roles: user -> user, assistant -> model
-    return chatHistory.map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.text }]
-    }));
+    // 1. Find index of the first user message
+    const firstUserIndex = chatHistory.findIndex(msg => msg.role === 'user');
+    if (firstUserIndex === -1) {
+      return [];
+    }
+
+    // 2. Slice history from the first user message
+    const relevantHistory = chatHistory.slice(firstUserIndex);
+
+    // 3. Map roles and ensure alternating roles
+    const contents = [];
+    let lastRole = null;
+
+    for (const msg of relevantHistory) {
+      const geminiRole = msg.role === 'user' ? 'user' : 'model';
+      if (geminiRole === lastRole && contents.length > 0) {
+        contents[contents.length - 1].parts[0].text += '\n' + msg.text;
+      } else {
+        contents.push({
+          role: geminiRole,
+          parts: [{ text: msg.text }]
+        });
+        lastRole = geminiRole;
+      }
+    }
+
+    return contents;
   }
 
   async function fetchAIResponse(userText) {
@@ -308,13 +340,15 @@ UENR Library Regulations:
 
 Be brief, concise, professional, friendly, and structured. Use Markdown formatting.`;
 
+    const payloadContents = getChatHistoryForGemini();
+
     // 1. Try backend server proxy /api/chat first
     try {
       const backendResponse = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: getChatHistoryForGemini(),
+          contents: payloadContents,
           systemInstruction: systemInstruction
         })
       });
@@ -323,6 +357,11 @@ Be brief, concise, professional, friendly, and structured. Use Markdown formatti
         const data = await backendResponse.json();
         if (data && data.text) {
           return data.text;
+        }
+      } else {
+        const errData = await backendResponse.json().catch(() => ({}));
+        if (errData && errData.error) {
+          console.warn("Backend API error response:", errData.error);
         }
       }
     } catch (e) {
@@ -348,31 +387,43 @@ Be brief, concise, professional, friendly, and structured. Use Markdown formatti
       }
     }
 
-    if (!clientApiKey) {
-      // API Key should be set by the administrator in the Admin Panel
-      console.warn("Gemini API Key is not configured. Please save the API Key in the Admin Panel.");
+    if (!clientApiKey || clientApiKey.trim() === '') {
+      throw new Error("GEMINI_API_KEY not configured. Please save a valid API Key in the Admin Panel.");
     }
 
-    // Direct fetch to Generative Language API
-    const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${clientApiKey}`;
-    const directResponse = await fetch(directUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: getChatHistoryForGemini(),
-        systemInstruction: {
-          parts: [{ text: systemInstruction }]
+    // Direct fetch to Generative Language API (try gemini-1.5-flash then fallback to gemini-2.0-flash)
+    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash'];
+    let lastError = null;
+
+    for (const model of modelsToTry) {
+      try {
+        const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${clientApiKey.trim()}`;
+        const directResponse = await fetch(directUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: payloadContents,
+            systemInstruction: {
+              parts: [{ text: systemInstruction }]
+            }
+          })
+        });
+
+        if (directResponse.ok) {
+          const directData = await directResponse.json();
+          if (directData.candidates && directData.candidates.length > 0 && directData.candidates[0].content) {
+            return directData.candidates[0].content.parts[0].text;
+          }
+        } else {
+          const errorData = await directResponse.json().catch(() => ({}));
+          lastError = new Error(errorData.error ? errorData.error.message : `Gemini API error (${directResponse.status})`);
         }
-      })
-    });
-
-    if (!directResponse.ok) {
-      const errorData = await directResponse.json();
-      throw new Error(errorData.error ? errorData.error.message : "Gemini API error");
+      } catch (err) {
+        lastError = err;
+      }
     }
 
-    const directData = await directResponse.json();
-    return directData.candidates[0].content.parts[0].text;
+    throw lastError || new Error("Failed to communicate with Gemini API.");
   }
 
   // Basic Markdown-to-HTML parser
