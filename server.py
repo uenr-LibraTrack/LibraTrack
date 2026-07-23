@@ -375,11 +375,6 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(400)
             self.end_headers()
 
-                except Exception as e:
-                    print("Error parsing chat POST:", e)
-            self.send_response(400)
-            self.end_headers()
-
         else:
             self.send_response(404)
             self.end_headers()
