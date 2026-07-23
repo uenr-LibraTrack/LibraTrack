@@ -520,6 +520,13 @@
 
         // The message will stay until the user manually closes it
       } else {
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          try {
+            navigator.vibrate([300, 100, 300, 100, 400]);
+          } catch (e) {
+            console.warn("Vibration failed:", e);
+          }
+        }
         showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Check-In Failed', result.message);
       }
     }

@@ -293,6 +293,14 @@ function processCheckIn(libId, studentId, studentName, role = 'student') {
   const lib = state.libraries[libIndex];
 
   if (!lib.isOpen) {
+    // Vibrate phone with distinct warning pattern (300ms vibe, 100ms pause, 300ms vibe, 100ms pause, 400ms vibe)
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([300, 100, 300, 100, 400]);
+      } catch (e) {
+        console.warn("Mobile vibration failed or not supported:", e);
+      }
+    }
     return { success: false, action: 'error', message: `${lib.name} is currently closed. Please try another library.` };
   }
 

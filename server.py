@@ -5,6 +5,7 @@ import os
 import traceback
 import urllib.request
 import urllib.error
+import urllib.parse
 
 
 PORT = int(os.environ.get('PORT', 8081))
@@ -263,63 +264,116 @@ class CustomAPIHandler(http.server.SimpleHTTPRequestHandler):
                                         api_key = line.strip().split('=', 1)[1].strip().strip('"').strip("'")
                                         break
                     
-                    if not api_key or not api_key.strip():
-                        self.send_response(400)
-                        self.send_header('Content-Type', 'application/json')
-                        self.end_headers()
-                        self.wfile.write(json.dumps({"error": "GEMINI_API_KEY not configured on server"}).encode('utf-8'))
-                        return
+                    text_response = None
 
-                    # Build Gemini request payload
-                    gemini_payload = {
-                        "contents": contents
-                    }
-                    if raw_sys_inst:
-                        gemini_payload["systemInstruction"] = {
-                            "parts": [{"text": str(raw_sys_inst)}]
+                    # 1. Try Gemini API if a valid-looking API Key is set (starts with AIza)
+                    if api_key and api_key.strip() and api_key.strip().startswith('AIza'):
+                        gemini_payload = {
+                            "contents": contents
                         }
+                        if raw_sys_inst:
+                            gemini_payload["systemInstruction"] = {
+                                "parts": [{"text": str(raw_sys_inst)}]
+                            }
 
-                    # Try models in order (with multi-model rate-limit fallback)
-                    models_to_try = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-8b', 'gemini-2.5-flash']
-                    last_exception = None
+                        models_to_try = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-8b', 'gemini-2.5-flash']
 
-                    for model in models_to_try:
-                        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key.strip()}"
-                        req = urllib.request.Request(
-                            url,
-                            data=json.dumps(gemini_payload).encode('utf-8'),
-                            headers={'Content-Type': 'application/json'},
-                            method='POST'
-                        )
+                        for model in models_to_try:
+                            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key.strip()}"
+                            req = urllib.request.Request(
+                                url,
+                                data=json.dumps(gemini_payload).encode('utf-8'),
+                                headers={'Content-Type': 'application/json'},
+                                method='POST'
+                            )
 
+                            try:
+                                with urllib.request.urlopen(req, timeout=12) as res:
+                                    response_data = json.loads(res.read().decode('utf-8'))
+                                    candidates = response_data.get('candidates', [])
+                                    if candidates and len(candidates) > 0:
+                                        t_res = candidates[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                                        if t_res and t_res.strip():
+                                            text_response = t_res.strip()
+                                            break
+                            except Exception as e:
+                                print(f"Gemini API ({model}) failed: {e}")
+
+                    # 2. Fallback to Pollinations AI Free Service if Gemini API is missing, invalid, or failed
+                    if not text_response:
                         try:
-                            with urllib.request.urlopen(req, timeout=15) as res:
-                                response_data = json.loads(res.read().decode('utf-8'))
-                                candidates = response_data.get('candidates', [])
-                                if candidates and len(candidates) > 0:
-                                    text_response = candidates[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-                                    self.send_response(200)
-                                    self.send_header('Content-Type', 'application/json')
-                                    self.end_headers()
-                                    self.wfile.write(json.dumps({"text": text_response}).encode('utf-8'))
-                                    return
-                                else:
-                                    raise Exception("Empty response from Gemini API")
-                        except urllib.error.HTTPError as he:
-                            error_content = he.read().decode('utf-8')
-                            print(f"Gemini API ({model}) HTTP Error: {he.code} - {error_content}")
-                            last_exception = (he.code, error_content)
-                        except Exception as e:
-                            print(f"Error calling Gemini API ({model}):", e)
-                            last_exception = (500, json.dumps({"error": str(e)}))
+                            formatted_messages = []
+                            if raw_sys_inst:
+                                formatted_messages.append({"role": "system", "content": str(raw_sys_inst)})
+                            
+                            for c in contents:
+                                role = "user" if c.get("role") == "user" else "assistant"
+                                parts = c.get("parts", [])
+                                t_val = parts[0].get("text", "") if parts and isinstance(parts[0], dict) else ""
+                                if t_val:
+                                    formatted_messages.append({"role": role, "content": t_val})
 
-                    if last_exception:
-                        status_code, err_msg = last_exception
-                        self.send_response(status_code)
+                            pol_payload = {
+                                "messages": formatted_messages,
+                                "model": "openai"
+                            }
+
+                            req_pol = urllib.request.Request(
+                                "https://text.pollinations.ai/v1/chat/completions",
+                                data=json.dumps(pol_payload).encode('utf-8'),
+                                headers={
+                                    'Content-Type': 'application/json',
+                                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+                                },
+                                method='POST'
+                            )
+                            with urllib.request.urlopen(req_pol, timeout=15) as res_pol:
+                                pol_json = json.loads(res_pol.read().decode('utf-8'))
+                                choices = pol_json.get('choices', [])
+                                if choices and len(choices) > 0:
+                                    t_ans = choices[0].get('message', {}).get('content', '')
+                                    if t_ans and t_ans.strip():
+                                        text_response = t_ans.strip()
+                        except Exception as pol_err:
+                            print("Pollinations AI v1 chat completions failed:", pol_err)
+                            # Secondary GET fallback to Pollinations AI
+                            try:
+                                last_user_msg = ""
+                                for m in reversed(contents):
+                                    if m.get("role") == "user":
+                                        last_user_msg = m.get("parts", [{}])[0].get("text", "")
+                                        break
+                                if last_user_msg:
+                                    encoded_prompt = urllib.parse.quote(last_user_msg)
+                                    get_url = f"https://text.pollinations.ai/{encoded_prompt}?model=openai"
+                                    req_get = urllib.request.Request(
+                                        get_url,
+                                        headers={'User-Agent': 'Mozilla/5.0'}
+                                    )
+                                    with urllib.request.urlopen(req_get, timeout=12) as res_get:
+                                        get_text = res_get.read().decode('utf-8')
+                                        if get_text and get_text.strip():
+                                            text_response = get_text.strip()
+                            except Exception as get_err:
+                                print("Pollinations AI GET fallback failed:", get_err)
+
+                    if text_response:
+                        self.send_response(200)
                         self.send_header('Content-Type', 'application/json')
                         self.end_headers()
-                        self.wfile.write(err_msg.encode('utf-8') if isinstance(err_msg, str) else err_msg)
+                        self.wfile.write(json.dumps({"text": text_response}).encode('utf-8'))
                         return
+                    else:
+                        self.send_response(500)
+                        self.send_header('Content-Type', 'application/json')
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "AI service busy or unreachable. Please try again."}).encode('utf-8'))
+                        return
+
+                except Exception as e:
+                    print("Error parsing chat POST:", e)
+            self.send_response(400)
+            self.end_headers()
 
                 except Exception as e:
                     print("Error parsing chat POST:", e)
