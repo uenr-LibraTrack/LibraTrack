@@ -84,6 +84,17 @@
   function initChatbot() {
     if (document.getElementById('chatbot-fab')) return; // Already initialized
 
+    // 0. Create Backdrop Blur Overlay
+    let overlay = document.getElementById('chatbot-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'chatbot-overlay';
+      overlay.className = 'chatbot-overlay';
+      overlay.title = 'Click to close assistant';
+      overlay.addEventListener('click', toggleChatbot);
+      document.body.appendChild(overlay);
+    }
+
     // 1. Create Floating Action Button (FAB)
     const fab = document.createElement('div');
     fab.id = 'chatbot-fab';
@@ -184,6 +195,16 @@
       });
     });
 
+    // Global ESC key listener to close chatbot
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        const panel = document.getElementById('chatbot-panel');
+        if (panel && panel.classList.contains('open')) {
+          toggleChatbot();
+        }
+      }
+    });
+
     // Load external info & previous sessions
     loadLibraryOfficialInfo();
     loadChatFromSession();
@@ -206,10 +227,13 @@
     const panel = document.getElementById('chatbot-panel');
     const fab = document.getElementById('chatbot-fab');
     const badge = document.getElementById('chatbot-fab-badge');
+    const overlay = document.getElementById('chatbot-overlay');
     if (!panel) return;
 
     const isOpen = panel.classList.toggle('open');
     fab.classList.toggle('active', isOpen);
+    if (overlay) overlay.classList.toggle('open', isOpen);
+    document.body.classList.toggle('chatbot-open', isOpen);
 
     if (badge) badge.style.display = 'none';
 
