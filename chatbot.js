@@ -775,10 +775,16 @@ ${liveLibInfo}
   function formatMarkdown(text) {
     if (!text) return '';
 
-    let escaped = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    // 1. Temporarily store valid HTML tags (cards, icons, buttons) in placeholders
+    const htmlBlocks = [];
+    let processed = text.replace(/<\/?[a-z1-6][^>]*>/gi, function (match) {
+      const placeholder = `___HTML_BLOCK_${htmlBlocks.length}___`;
+      htmlBlocks.push(match);
+      return placeholder;
+    });
+
+    // 2. Escape raw ampersands that aren't entity references
+    let escaped = processed.replace(/&(?!#?\w+;)/g, "&amp;");
 
     // Code blocks: ```code```
     escaped = escaped.replace(/```([\s\S]+?)```/g, function (match, code) {
@@ -886,6 +892,15 @@ ${liveLibInfo}
       result = result.replace(new RegExp(`<p>\\s*__TABLE_PLACEHOLDER_${i}__\\s*</p>`, 'g'), tables[i]);
       result = result.replace(new RegExp(`__TABLE_PLACEHOLDER_${i}__`, 'g'), tables[i]);
     }
+
+    // Restore preserved HTML tags
+    for (let i = 0; i < htmlBlocks.length; i++) {
+      result = result.replace(new RegExp(`___HTML_BLOCK_${i}___`, 'g'), htmlBlocks[i]);
+    }
+
+    // Clean up empty <p></p> wrapping around block elements
+    result = result.replace(/<p>\s*(<(?:div|ul|ol|table|blockquote|h[1-6])[^>]*>)/gi, '$1')
+                   .replace(/(<\/(?:div|ul|ol|table|blockquote|h[1-6])>)\s*<\/p>/gi, '$1');
 
     return result;
   }
