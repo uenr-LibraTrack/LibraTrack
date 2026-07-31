@@ -1,4 +1,4 @@
-const CACHE_NAME = 'libratrack-v9';
+const CACHE_NAME = 'libratrack-v10';
 
 const PRECACHE_ASSETS = [
   './',
@@ -7,6 +7,7 @@ const PRECACHE_ASSETS = [
   './checkin.html',
   './notifications.html',
   './login.html',
+  './signup.html',
   './style.css?v=2',
   './app.js?v=2',
   './admin.js',
@@ -15,6 +16,7 @@ const PRECACHE_ASSETS = [
   './manifest.json',
   './uenr.png',
   './backdrop.jpg',
+  './Account success created.jfif',
   './JOEY-SHOT-IT-10-1024x683.jpg',
   './images.jfif',
   './images (1).jfif',

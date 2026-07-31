@@ -87,6 +87,12 @@
       border-color: rgba(220, 38, 38, 0.3);
       color: #fca5a5;
     }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.3);
+      color: #86efac;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="uenr.png" />
@@ -150,6 +156,8 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const roleParam = urlParams.get('role') || 'student';
+    const emailParam = urlParams.get('email');
+    const createdParam = urlParams.get('created');
 
     if (roleParam === 'admin') {
       document.getElementById('login-title').textContent = 'Admin Sign In';
@@ -176,6 +184,15 @@
       alertBox.className = `alert show alert-${type}`;
       alertTitle.innerHTML = title;
       alertMsg.innerHTML = msg;
+    }
+
+    if (emailParam) {
+      idInput.value = emailParam;
+      setTimeout(() => passInput.focus(), 300);
+    }
+
+    if (createdParam === 'true') {
+      showAlert('success', 'Account Created Successfully!', 'Please enter your password to sign in with your credentials.');
     }
 
     form.addEventListener('submit', (e) => {

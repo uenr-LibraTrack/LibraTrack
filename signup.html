@@ -93,6 +93,42 @@
       border-color: rgba(34, 197, 94, 0.3);
       color: #86efac;
     }
+
+    /* Success Screen Styling */
+    .success-card {
+      text-align: center;
+      padding: 10px 5px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .success-img-wrapper {
+      margin: 0 auto 20px auto;
+      max-width: 250px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .success-img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .continue-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="uenr.png" />
@@ -108,43 +144,65 @@
 
   <div class="login-wrapper">
     <div class="card login-panel">
-      <div class="login-brand">
-        <img src="uenr.png" alt="UENR Logo" />
-        <h2>Student Sign Up</h2>
-        <p>Create a new student account</p>
+      <div id="signup-initial-view">
+        <div class="login-brand">
+          <img src="uenr.png" alt="UENR Logo" />
+          <h2>Student Sign Up</h2>
+          <p>Create a new student account</p>
+        </div>
+
+        <form id="signup-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="user-name">FULL NAME</label>
+            <input class="form-input" id="user-name" type="text" placeholder="e.g. John Terry" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="user-id">EMAIL</label>
+            <input class="form-input" id="user-id" type="text" placeholder="e.g.johnterry@gmail.com"
+              autocomplete="username" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="user-password">PASSWORD</label>
+            <input class="form-input" id="user-password" type="password" placeholder="Create a password"
+              autocomplete="new-password" required />
+          </div>
+
+          <button type="submit" class="btn-submit" id="signup-btn">Create Account</button>
+
+          <div id="login-link-container" style="text-align: center; margin-top: 15px;">
+            <p style="color: var(--text-secondary); font-size: 14px;">Already have an account? <a
+                href="login.html?role=student"
+                style="color: var(--brand-blue); text-decoration: none; font-weight: 600;">Sign In</a></p>
+          </div>
+        </form>
+
+        <div class="alert" id="signup-alert" style="margin-top:20px;">
+          <div class="alert-title" id="signup-alert-title"></div>
+          <div id="signup-alert-msg"></div>
+        </div>
       </div>
 
-      <form id="signup-form" novalidate>
-        <div class="form-group">
-          <label class="form-label" for="user-name">FULL NAME</label>
-          <input class="form-input" id="user-name" type="text" placeholder="e.g. John Terry" required />
+      <!-- Account Created Success Display -->
+      <div id="signup-success-view" class="success-card" style="display: none;">
+        <div class="success-img-wrapper">
+          <img src="Account success created.jfif" alt="Account Successfully Created" />
         </div>
-
-        <div class="form-group">
-          <label class="form-label" for="user-id">EMAIL</label>
-          <input class="form-input" id="user-id" type="text" placeholder="e.g.johnterry@gmail.com"
-            autocomplete="username" required />
+        <div class="login-brand" style="margin-bottom: 12px;">
+          <h2 style="color: #4ade80; font-size: 22px;">Account Created!</h2>
+          <p id="success-welcome-msg" style="color: var(--text-primary); margin-top: 6px; font-weight: 500;">
+            Your account has been created successfully.
+          </p>
         </div>
-
-        <div class="form-group">
-          <label class="form-label" for="user-password">PASSWORD</label>
-          <input class="form-input" id="user-password" type="password" placeholder="Create a password"
-            autocomplete="new-password" required />
-        </div>
-
-        <button type="submit" class="btn-submit" id="signup-btn">Create Account</button>
-
-        <div id="login-link-container" style="text-align: center; margin-top: 15px;">
-          <p style="color: var(--text-secondary); font-size: 14px;">Already have an account? <a
-              href="login.html?role=student"
-              style="color: var(--brand-blue); text-decoration: none; font-weight: 600;">Sign In</a></p>
-        </div>
-      </form>
-
-      <div class="alert" id="signup-alert" style="margin-top:20px;">
-        <div class="alert-title" id="signup-alert-title"></div>
-        <div id="signup-alert-msg"></div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+          Click <strong>Continue</strong> below to enter the credentials you created your account with and sign in.
+        </p>
+        <button type="button" class="btn-submit continue-btn" id="continue-btn">
+          <span>Continue</span> <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
+        </button>
       </div>
+
     </div>
   </div>
 
@@ -193,10 +251,21 @@
         if (authError) {
           showAlert('error', 'Sign Up Failed', authError.message);
         } else {
-          showAlert('success', 'Account Created', 'Successfully registered! Redirecting to login...');
-          setTimeout(() => {
-            window.location.href = 'login.html?role=student';
-          }, 2000);
+          // Hide registration form view
+          document.getElementById('signup-initial-view').style.display = 'none';
+
+          // Update welcome message
+          document.getElementById('success-welcome-msg').innerHTML = `Welcome, <strong>${name}</strong>!`;
+
+          // Display success view with image
+          const successView = document.getElementById('signup-success-view');
+          successView.style.display = 'block';
+
+          // Activate Continue button to allow user to enter credentials
+          const continueBtn = document.getElementById('continue-btn');
+          continueBtn.onclick = () => {
+            window.location.href = `login.html?role=student&email=${encodeURIComponent(email)}&created=true`;
+          };
         }
       });
     });
