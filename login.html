@@ -411,6 +411,19 @@
               showAlert('error', 'Login Failed', authError.message || 'Incorrect email or password.');
             } else {
               const fullName = authData.user?.user_metadata?.full_name || name;
+              try {
+                if (authData?.user) {
+                  supabaseClient.from('users').upsert({
+                    id: authData.user.id,
+                    email: userId,
+                    full_name: fullName,
+                    role: role,
+                    last_login: new Date().toISOString()
+                  });
+                }
+              } catch (syncErr) {
+                console.warn('Public table login sync info:', syncErr);
+              }
               loginUser(userId, fullName, role);
               window.location.href = 'index.html';
             }

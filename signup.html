@@ -408,13 +408,28 @@
         email: email,
         password: password,
         options: { data: { full_name: name } }
-      }).then(({ data: authData, error: authError }) => {
+      }).then(async ({ data: authData, error: authError }) => {
         signupBtn.innerHTML = ogText;
         signupBtn.disabled = false;
 
         if (authError) {
           showAlert('error', 'Sign Up Failed', authError.message);
         } else {
+          // Sync record into public.users table so it displays in Supabase Table Editor
+          try {
+            if (authData?.user) {
+              await supabaseClient.from('users').upsert({
+                id: authData.user.id,
+                email: email,
+                full_name: name,
+                role: 'student',
+                created_at: new Date().toISOString()
+              });
+            }
+          } catch (syncErr) {
+            console.warn('Public table sync info:', syncErr);
+          }
+
           // Hide registration form view
           document.getElementById('signup-initial-view').style.display = 'none';
 
