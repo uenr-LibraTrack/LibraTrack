@@ -162,6 +162,25 @@
       font-weight: 400;
     }
 
+    .toggle-password {
+      color: #6C1BD9 !important;
+      font-size: 16px !important;
+      margin-left: auto !important;
+      margin-right: 0 !important;
+      cursor: pointer;
+      padding: 8px;
+      transition: all 0.2s ease;
+      user-select: none;
+      pointer-events: auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .toggle-password:hover {
+      color: #4C1D95 !important;
+      transform: scale(1.15);
+    }
+
     /* White Pill Button */
     .btn-submit-pill {
       width: 100%;
@@ -290,6 +309,7 @@
             <div class="pill-input-group">
               <i class="fa-solid fa-lock"></i>
               <input id="user-password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+              <i class="fa-solid fa-eye toggle-password" id="toggle-password-btn" title="Toggle Password Visibility"></i>
             </div>
           </div>
 
@@ -430,6 +450,18 @@
           });
       }
     });
+
+    const togglePassBtn = document.getElementById('toggle-password-btn');
+    if (togglePassBtn) {
+      togglePassBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isPassword = passInput.getAttribute('type') === 'password';
+        passInput.setAttribute('type', isPassword ? 'text' : 'password');
+        togglePassBtn.classList.toggle('fa-eye', !isPassword);
+        togglePassBtn.classList.toggle('fa-eye-slash', isPassword);
+      });
+    }
   </script>
 </body>
 
