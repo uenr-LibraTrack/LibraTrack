@@ -6,71 +6,205 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Sign Up – UENR LibraTrack</title>
+  <title>Student Sign Up – UENR LibraTrack</title>
   <link rel="stylesheet" href="style.css?v=2" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
-    .login-wrapper {
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #E6DAFE 0%, #D8C7FF 50%, #EDE4FF 100%);
       min-height: 100vh;
+      margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
       position: relative;
+      overflow-x: hidden;
     }
 
+    .login-wrapper {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Modern White Sign Up Panel (Pinterest Right Box) */
     .login-panel {
       max-width: 400px;
       width: 100%;
-      z-index: 10;
+      background: #FFFFFF;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -12px rgba(108, 27, 217, 0.25);
       position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(108, 27, 217, 0.1);
+    }
+
+    .card-content {
+      padding: 40px 32px 20px 32px;
+      z-index: 2;
     }
 
     .login-brand {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 26px;
     }
 
     .login-brand img {
-      height: 60px;
-      margin-bottom: 10px;
+      height: 65px;
+      margin-bottom: 12px;
       animation: floatLogo 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+      filter: drop-shadow(0 4px 12px rgba(108, 27, 217, 0.15));
     }
 
     @keyframes floatLogo {
-
-      0%,
-      100% {
+      0%, 100% {
         transform: translateY(0);
       }
-
       50% {
         transform: translateY(-8px);
-        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+        filter: drop-shadow(0 8px 18px rgba(108, 27, 217, 0.3));
       }
     }
 
     .login-brand h2 {
-      font-size: 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
       margin: 0;
-      color: var(--text-primary);
+      color: #6C1BD9;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .login-brand p {
-      color: var(--text-secondary);
+      color: #7E30E1;
+      font-size: 11px;
+      margin-top: 6px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      color: #6C1BD9;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      margin-left: 16px;
+    }
+
+    /* Pill-shaped Input Container with icon inside */
+    .pill-input-group {
+      display: flex;
+      align-items: center;
+      background: #EFE8FA;
+      border-radius: 50px;
+      padding: 0 18px;
+      height: 50px;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .pill-input-group:focus-within {
+      background: #EAE0F8;
+      border-color: #6C1BD9;
+      box-shadow: 0 0 0 3px rgba(108, 27, 217, 0.15);
+    }
+
+    .pill-input-group i {
+      color: #6C1BD9;
+      font-size: 17px;
+      margin-right: 12px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .pill-input-group input {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: #3B0764;
+      font-weight: 600;
       font-size: 14px;
-      margin-top: 5px;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .pill-input-group input::placeholder {
+      color: #9B72CF;
+      font-weight: 400;
+    }
+
+    /* Vibrant Purple Pill Button */
+    .btn-submit-pill {
+      width: 100%;
+      height: 52px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #7C22EC 0%, #6105CB 100%);
+      color: #FFFFFF;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 8px 20px rgba(108, 27, 217, 0.35);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit-pill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(108, 27, 217, 0.45);
+    }
+
+    .btn-submit-pill:active {
+      transform: translateY(0);
+    }
+
+    #login-link-container p {
+      color: #475569;
+      font-size: 13.5px;
+    }
+
+    #login-link-container a {
+      color: #6C1BD9;
+      text-decoration: underline;
+      font-weight: 700;
     }
 
     /* Alert Box Styling */
     .alert {
       padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 16px;
+      font-size: 13.5px;
       display: none;
       border: 1px solid transparent;
       animation: fadeIn 0.3s ease;
+      margin-top: 15px;
     }
 
     .alert.show {
@@ -83,15 +217,15 @@
     }
 
     .alert-error {
-      background: rgba(220, 38, 38, 0.15);
-      border-color: rgba(220, 38, 38, 0.3);
-      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #b91c1c;
     }
 
     .alert-success {
-      background: rgba(34, 197, 94, 0.15);
+      background: rgba(34, 197, 94, 0.12);
       border-color: rgba(34, 197, 94, 0.3);
-      color: #86efac;
+      color: #15803d;
     }
 
     /* Success Screen Styling */
@@ -106,9 +240,8 @@
       max-width: 250px;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      background: rgba(15, 23, 42, 0.6);
+      box-shadow: 0 10px 25px rgba(108, 27, 217, 0.2);
+      border: 2px solid rgba(108, 27, 217, 0.15);
     }
 
     .success-img-wrapper img {
@@ -118,89 +251,110 @@
       object-fit: cover;
     }
 
-    .continue-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+    /* Bottom Layered Vector Waves (Purple gradient theme for Right Box) */
+    .wave-container {
       margin-top: 10px;
+      width: 100%;
+      line-height: 0;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -2px;
+    }
+
+    .wave-container svg {
+      width: 100%;
+      height: 105px;
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="uenr.png" />
   <link rel="apple-touch-icon" href="uenr.png" />
-
 </head>
 
-<body class="dark-theme">
-
-  <!-- Reusing the backdrop -->
-  <div class="backdrop"></div>
-  <div class="backdrop-overlay"></div>
+<body>
 
   <div class="login-wrapper">
-    <div class="card login-panel">
-      <div id="signup-initial-view">
-        <div class="login-brand">
-          <img src="uenr.png" alt="UENR Logo" />
-          <h2>Student Sign Up</h2>
-          <p>Create a new student account</p>
+    <div class="login-panel">
+      <div class="card-content">
+        <div id="signup-initial-view">
+          <div class="login-brand">
+            <img src="uenr.png" alt="UENR Logo" />
+            <h2>Student Sign Up</h2>
+            <p>Create a new student account</p>
+          </div>
+
+          <form id="signup-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="user-name">FULL NAME</label>
+              <div class="pill-input-group">
+                <i class="fa-solid fa-user"></i>
+                <input id="user-name" type="text" placeholder="e.g. John Terry" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="user-id">EMAIL</label>
+              <div class="pill-input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input id="user-id" type="text" placeholder="e.g. johnterry@gmail.com" autocomplete="username" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="user-password">PASSWORD</label>
+              <div class="pill-input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input id="user-password" type="password" placeholder="Create a password" autocomplete="new-password" required />
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit-pill" id="signup-btn">Create Account</button>
+
+            <div id="login-link-container" style="text-align: center; margin-top: 20px;">
+              <p>Already have an account? <a href="login.html?role=student">Sign In</a></p>
+            </div>
+          </form>
+
+          <div class="alert" id="signup-alert">
+            <div class="alert-title" id="signup-alert-title"></div>
+            <div id="signup-alert-msg"></div>
+          </div>
         </div>
 
-        <form id="signup-form" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="user-name">FULL NAME</label>
-            <input class="form-input" id="user-name" type="text" placeholder="e.g. John Terry" required />
+        <!-- Account Created Success Display -->
+        <div id="signup-success-view" class="success-card" style="display: none;">
+          <div class="success-img-wrapper">
+            <img src="Account success created.jfif" alt="Account Successfully Created" />
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="user-id">EMAIL</label>
-            <input class="form-input" id="user-id" type="text" placeholder="e.g.johnterry@gmail.com"
-              autocomplete="username" required />
+          <div class="login-brand" style="margin-bottom: 12px;">
+            <h2 style="color: #16a34a; font-size: 22px;">Account Created!</h2>
+            <p id="success-welcome-msg" style="color: #3B0764; margin-top: 6px; font-weight: 600;">
+              Your account has been created successfully.
+            </p>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="user-password">PASSWORD</label>
-            <input class="form-input" id="user-password" type="password" placeholder="Create a password"
-              autocomplete="new-password" required />
-          </div>
-
-          <button type="submit" class="btn-submit" id="signup-btn">Create Account</button>
-
-          <div id="login-link-container" style="text-align: center; margin-top: 15px;">
-            <p style="color: var(--text-secondary); font-size: 14px;">Already have an account? <a
-                href="login.html?role=student"
-                style="color: var(--brand-blue); text-decoration: none; font-weight: 600;">Sign In</a></p>
-          </div>
-        </form>
-
-        <div class="alert" id="signup-alert" style="margin-top:20px;">
-          <div class="alert-title" id="signup-alert-title"></div>
-          <div id="signup-alert-msg"></div>
+          <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+            Click <strong>Continue</strong> below to enter the credentials you created your account with and sign in.
+          </p>
+          <button type="button" class="btn-submit-pill" id="continue-btn">
+            <span>Continue</span> <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
+          </button>
         </div>
+
       </div>
 
-      <!-- Account Created Success Display -->
-      <div id="signup-success-view" class="success-card" style="display: none;">
-        <div class="success-img-wrapper">
-          <img src="Account success created.jfif" alt="Account Successfully Created" />
-        </div>
-        <div class="login-brand" style="margin-bottom: 12px;">
-          <h2 style="color: #4ade80; font-size: 22px;">Account Created!</h2>
-          <p id="success-welcome-msg" style="color: var(--text-primary); margin-top: 6px; font-weight: 500;">
-            Your account has been created successfully.
-          </p>
-        </div>
-        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
-          Click <strong>Continue</strong> below to enter the credentials you created your account with and sign in.
-        </p>
-        <button type="button" class="btn-submit continue-btn" id="continue-btn">
-          <span>Continue</span> <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
-        </button>
+      <!-- Layered Wave Art (Matching Pinterest Right Box) -->
+      <div class="wave-container">
+        <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+          <path d="M0,45 C150,95 350,-5 500,45 L500,150 L0,150 Z" fill="#D8C2F8"></path>
+          <path d="M0,65 C180,115 320,15 500,75 L500,150 L0,150 Z" fill="#9B51E0"></path>
+          <path d="M0,90 C140,45 340,115 500,85 L500,150 L0,150 Z" fill="#6105CB"></path>
+        </svg>
       </div>
 
     </div>
