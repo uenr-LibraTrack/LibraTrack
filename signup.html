@@ -12,58 +12,67 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
+    html, body {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #E6DAFE 0%, #D8C7FF 50%, #EDE4FF 100%);
       min-height: 100vh;
-      margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow-x: hidden;
     }
 
     .login-wrapper {
-      min-height: 100vh;
+      height: 100vh;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 30px 20px;
+      padding: 16px;
       position: relative;
       z-index: 10;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     /* Modern White Sign Up Panel (Pinterest Right Box) */
     .login-panel {
-      max-width: 400px;
+      max-width: 390px;
       width: 100%;
+      max-height: calc(100vh - 32px);
       background: #FFFFFF;
-      border-radius: 36px;
-      box-shadow: 0 25px 50px -12px rgba(108, 27, 217, 0.25);
+      border-radius: 32px;
+      box-shadow: 0 20px 45px -10px rgba(108, 27, 217, 0.25);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       border: 1px solid rgba(108, 27, 217, 0.1);
     }
 
     .card-content {
-      padding: 40px 32px 20px 32px;
+      padding: 30px 28px 10px 28px;
       z-index: 2;
     }
 
     .login-brand {
       text-align: center;
-      margin-bottom: 26px;
+      margin-bottom: 20px;
     }
 
     .login-brand img {
-      height: 65px;
-      margin-bottom: 12px;
+      height: 55px;
+      margin-bottom: 8px;
       animation: floatLogo 3s ease-in-out infinite;
-      filter: drop-shadow(0 4px 12px rgba(108, 27, 217, 0.15));
+      filter: drop-shadow(0 4px 10px rgba(108, 27, 217, 0.15));
     }
 
     @keyframes floatLogo {
@@ -71,14 +80,14 @@
         transform: translateY(0);
       }
       50% {
-        transform: translateY(-8px);
-        filter: drop-shadow(0 8px 18px rgba(108, 27, 217, 0.3));
+        transform: translateY(-6px);
+        filter: drop-shadow(0 6px 14px rgba(108, 27, 217, 0.3));
       }
     }
 
     .login-brand h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       margin: 0;
       color: #6C1BD9;
@@ -89,25 +98,25 @@
     .login-brand p {
       color: #7E30E1;
       font-size: 11px;
-      margin-top: 6px;
+      margin-top: 4px;
       font-weight: 600;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .form-label {
       display: block;
       color: #6C1BD9;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      margin-bottom: 6px;
-      margin-left: 16px;
+      margin-bottom: 4px;
+      margin-left: 14px;
     }
 
     /* Pill-shaped Input Container with icon inside */
@@ -116,8 +125,8 @@
       align-items: center;
       background: #EFE8FA;
       border-radius: 50px;
-      padding: 0 18px;
-      height: 50px;
+      padding: 0 16px;
+      height: 46px;
       transition: all 0.3s ease;
       border: 2px solid transparent;
     }
@@ -130,9 +139,9 @@
 
     .pill-input-group i {
       color: #6C1BD9;
-      font-size: 17px;
-      margin-right: 12px;
-      width: 20px;
+      font-size: 16px;
+      margin-right: 10px;
+      width: 18px;
       text-align: center;
       flex-shrink: 0;
     }
@@ -143,7 +152,7 @@
       outline: none;
       color: #3B0764;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13.5px;
       width: 100%;
       font-family: 'Inter', sans-serif;
     }
@@ -156,19 +165,19 @@
     /* Vibrant Purple Pill Button */
     .btn-submit-pill {
       width: 100%;
-      height: 52px;
+      height: 48px;
       border-radius: 50px;
       background: linear-gradient(135deg, #7C22EC 0%, #6105CB 100%);
       color: #FFFFFF;
       font-family: 'Outfit', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       border: none;
       cursor: pointer;
-      margin-top: 10px;
-      box-shadow: 0 8px 20px rgba(108, 27, 217, 0.35);
+      margin-top: 8px;
+      box-shadow: 0 6px 18px rgba(108, 27, 217, 0.35);
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
@@ -178,7 +187,7 @@
 
     .btn-submit-pill:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(108, 27, 217, 0.45);
+      box-shadow: 0 10px 22px rgba(108, 27, 217, 0.45);
     }
 
     .btn-submit-pill:active {
@@ -187,7 +196,8 @@
 
     #login-link-container p {
       color: #475569;
-      font-size: 13.5px;
+      font-size: 13px;
+      margin: 0;
     }
 
     #login-link-container a {
@@ -198,13 +208,13 @@
 
     /* Alert Box Styling */
     .alert {
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-size: 13.5px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
       display: none;
       border: 1px solid transparent;
       animation: fadeIn 0.3s ease;
-      margin-top: 15px;
+      margin-top: 10px;
     }
 
     .alert.show {
@@ -213,7 +223,7 @@
 
     .alert-title {
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .alert-error {
@@ -228,42 +238,42 @@
       color: #15803d;
     }
 
-    /* Success Screen Styling */
+    /* Compact Success Screen Styling */
     .success-card {
       text-align: center;
-      padding: 10px 5px;
+      padding: 5px 0;
       animation: fadeIn 0.4s ease-in-out;
     }
 
     .success-img-wrapper {
-      margin: 0 auto 20px auto;
-      max-width: 250px;
-      border-radius: 16px;
+      margin: 0 auto 12px auto;
+      max-width: 140px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(108, 27, 217, 0.2);
+      box-shadow: 0 8px 20px rgba(108, 27, 217, 0.2);
       border: 2px solid rgba(108, 27, 217, 0.15);
     }
 
     .success-img-wrapper img {
       width: 100%;
-      height: auto;
+      height: 100px;
       display: block;
       object-fit: cover;
     }
 
     /* Bottom Layered Vector Waves (Purple gradient theme for Right Box) */
     .wave-container {
-      margin-top: 10px;
       width: 100%;
       line-height: 0;
       position: relative;
       z-index: 1;
       margin-bottom: -2px;
+      margin-top: 5px;
     }
 
     .wave-container svg {
       width: 100%;
-      height: 105px;
+      height: 85px;
       display: block;
     }
 
@@ -316,7 +326,7 @@
 
             <button type="submit" class="btn-submit-pill" id="signup-btn">Create Account</button>
 
-            <div id="login-link-container" style="text-align: center; margin-top: 20px;">
+            <div id="login-link-container" style="text-align: center; margin-top: 15px;">
               <p>Already have an account? <a href="login.html?role=student">Sign In</a></p>
             </div>
           </form>
@@ -327,21 +337,21 @@
           </div>
         </div>
 
-        <!-- Account Created Success Display -->
+        <!-- Compact Account Created Success Display -->
         <div id="signup-success-view" class="success-card" style="display: none;">
           <div class="success-img-wrapper">
             <img src="Account success created.jfif" alt="Account Successfully Created" />
           </div>
-          <div class="login-brand" style="margin-bottom: 12px;">
-            <h2 style="color: #16a34a; font-size: 22px;">Account Created!</h2>
-            <p id="success-welcome-msg" style="color: #3B0764; margin-top: 6px; font-weight: 600;">
-              Your account has been created successfully.
+          <div class="login-brand" style="margin-bottom: 8px;">
+            <h2 style="color: #16a34a; font-size: 20px;">Account Created!</h2>
+            <p id="success-welcome-msg" style="color: #3B0764; margin-top: 4px; font-weight: 600; font-size: 12.5px;">
+              Your account is ready.
             </p>
           </div>
-          <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
-            Click <strong>Continue</strong> below to enter the credentials you created your account with and sign in.
+          <p style="color: #64748b; font-size: 12.5px; margin-bottom: 12px; line-height: 1.4;">
+            Click <strong>Continue</strong> to sign in.
           </p>
-          <button type="button" class="btn-submit-pill" id="continue-btn">
+          <button type="button" class="btn-submit-pill" id="continue-btn" style="height: 44px; font-size: 14px;">
             <span>Continue</span> <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
           </button>
         </div>
