@@ -172,7 +172,7 @@ function loginUser(id, name, role) {
 
 function logoutUser() {
   localStorage.removeItem(AUTH_KEY);
-  window.location.href = 'entry.html';
+  window.location.replace('entry.html');
 }
 
 function requireAuth() {
@@ -186,6 +186,16 @@ function requireAuth() {
   if (!user && !isPublicPage) {
     window.location.replace('entry.html');
     return null;
+  }
+
+  // If user is logged in but tries to access a public landing/login/signup page, redirect to their home page
+  if (user && isPublicPage) {
+    if (user.role === 'admin') {
+      window.location.replace('admin.html');
+    } else {
+      window.location.replace('index.html');
+    }
+    return user;
   }
 
   return user;
@@ -464,6 +474,11 @@ function syncToggleSwitch() {
   });
 }
 
+// Enforce authentication check on every page show (handles Back-Forward cache)
+window.addEventListener('pageshow', () => {
+  requireAuth();
+});
+
 // Handle toggle switch bindings on document load
 document.addEventListener('DOMContentLoaded', () => {
   // Enforce auth
@@ -567,7 +582,7 @@ function initNotifications() {
 
 // UPDATE SUPABASE FOR RCEES
 setTimeout(async () => {
-  if (!localStorage.getItem('RCEES_UPDATED_V3')) {
+  if (typeof supabaseClient !== 'undefined' && !localStorage.getItem('RCEES_UPDATED_V3')) {
     try {
       // First try to update the existing LIB-H2 record
       await window.supabaseClient.from('libraries').update({ id: 'LIB-RCEES', name: 'RCEES Library' }).eq('id', 'LIB-H2');
